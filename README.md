@@ -10,21 +10,5 @@ Aqui concentro anotações, exercícios de fixação e projetos desenvolvidos ao
 - Criar soluções utilizando **LLMs (Large Language Models)** e **RAG (Retrieval-Augmented Generation)**.
 - Construir um portfólio sólido de automação de processos.
 
-## 🛠️ Tech Stack & Ferramentas
-As principais tecnologias exploradas neste repositório incluem:
-
-* **Linguagem:** Python
-* **IDE:** VS Code (Jupyter Notebooks & Scripts .py)
-* **Frameworks de IA:** LangChain, CrewAI, OpenAI API, Hugging Face
-* **Automação:** Selenium, Playwright, APIs REST
-* **Dados:** Pandas, Vector Databases (ChromaDB/Pinecone)
-
-## 📂 Estrutura do Repositório
-O conteúdo está organizado por módulos ou temas específicos para facilitar a navegação:
-
-* `/Fundamentos`: Conceitos base de automação e Python avançado.
-* `/Agentes-IA`: Criação de agentes que executam tarefas autônomas.
-* `/Projetos-Praticos`: Aplicações completas desenvolvidas como desafios do curso.
-
 ---
 *Este repositório é mantido ativamente como parte do meu desenvolvimento profissional na área de Engenharia de IA.*
