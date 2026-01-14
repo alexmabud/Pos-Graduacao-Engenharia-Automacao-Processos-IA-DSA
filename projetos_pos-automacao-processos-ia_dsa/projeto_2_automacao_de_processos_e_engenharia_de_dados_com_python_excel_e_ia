@@ -1,0 +1,139 @@
+# Projeto 2 - Automação do Processo de Backup, Movimentação de Arquivos, Criptografia e Logging com Python
+# Script Versão 1
+
+# Imports
+import os
+import shutil
+import zipfile
+import tkinter as tk
+from tkinter import messagebox
+
+
+# ==========================================
+# CONFIGURAÇÃO DE CAMINHOS (Constantes)
+# ==========================================
+# Origem: Onde os arquivos brutos chegam
+CAMINHO_ORIGEM = r"C:\Users\User\OneDrive\Documentos\Python\Dev_Python\Abud Python Learning\DSA\Módulo_1-Automação-Excel-e-Engenharia-de-Dados\4_Ferramentas_Python_para_Automacao_de_Processos_no_Sistema\origem"
+
+# Destino: Para onde os arquivos processados/organizados vão
+CAMINHO_DESTINO = r"C:\Users\User\OneDrive\Documentos\Python\Dev_Python\Abud Python Learning\DSA\Módulo_1-Automação-Excel-e-Engenharia-de-Dados\4_Ferramentas_Python_para_Automacao_de_Processos_no_Sistema\destino"
+
+# ==========================================
+# FUNÇÕES
+# ==========================================
+def dsa_busca_arquivos_csv(diretorio):
+    arquivos_csv = []
+    for root, dirs, files in os.walk(diretorio):
+        for file in files:
+            if file.endswith(".csv"):
+                arquivos_csv.append(os.path.join(root, file))
+    return arquivos_csv
+
+# ==========================================
+# EXECUÇÃO DA AUTOMAÇÃO
+# ==========================================
+
+# 1. Verificar se a pasta de destino existe, se não, criar
+if not os.path.exists(CAMINHO_DESTINO):
+    os.makedirs(CAMINHO_DESTINO)
+    print(f"Pasta de destino criada: {CAMINHO_DESTINO}")
+
+# 2. Buscar os arquivos na origem
+arquivos_encontrados = dsa_busca_arquivos_csv(CAMINHO_ORIGEM)
+
+print(f"Processando {len(arquivos_encontrados)} arquivos...\n")
+
+
+# ==========================================
+# Função para compactar uma lista de arquivos em um arquivo zip.
+# ==========================================
+
+def dsa_compacta_arquivos(arquivos, origem):
+
+    # Abre um arquivo zip para escrita.
+    with zipfile.ZipFile(origem, 'w') as zipf:
+
+        # Percorre cada arquivo na lista de arquivos.
+        for arquivo in arquivos:
+
+            # Adiciona o arquivo ao arquivo zip, mantendo apenas o nome do arquivo.
+            zipf.write(arquivo, os.path.basename(arquivo))
+
+
+# ==========================================
+# Função para mover um arquivo de uma localização de origem para uma localização de destino.
+# ==========================================
+
+def dsa_move_arquivo(origem, destino):
+
+    # Move o arquivo da origem para o destino.
+    shutil.move(origem, destino)
+
+print(f"Compactando {len(arquivos_encontrados)} arquivos...\n")
+
+
+# ==========================================
+# Função para exibir um popup com uma mensagem.
+# ==========================================
+
+def dsa_exibe_popup(mensagem, sucesso=True):
+
+    # Cria uma instância da classe Tk para a janela.
+    root = tk.Tk()
+
+    # Esconde a janela principal.
+    root.withdraw()
+
+    # Verifica se a mensagem é de sucesso ou erro e exibe o popup correspondente.
+    if sucesso:
+        # Exibe um popup de informação com a mensagem de sucesso.
+        messagebox.showinfo("Sucesso", mensagem)
+    else:
+        # Exibe um popup de erro com a mensagem de erro.
+        messagebox.showerror("Erro", mensagem)
+    root.destroy() # Fecha a janela Tk após exibir o popup.
+
+# ==========================================
+# Função principal do projeto 2.
+# ==========================================
+
+def dsaprojeto2():
+
+   
+     # Busca por arquivos CSV no diretório de origem.
+    arquivos_csv = dsa_busca_arquivos_csv(CAMINHO_ORIGEM)
+    
+    # Verifica se foram encontrados arquivos CSV.
+    if not arquivos_csv:
+        # Exibe um popup informando que nenhum arquivo CSV foi encontrado.
+        dsa_exibe_popup("Nenhum arquivo CSV encontrado.", sucesso=False)
+        return
+    
+    # Nome do arquivo zip para o backup.
+    nome_zip = "backup.zip"
+
+    # Caminho completo para o arquivo zip.
+    caminho_zip = os.path.join(CAMINHO_ORIGEM, nome_zip)
+    
+    # Bloco try/except
+    try:
+        
+        # Compacta os arquivos CSV em um arquivo zip.
+        dsa_compacta_arquivos(arquivos_csv, caminho_zip)
+        
+        # Move o arquivo zip compactado para o diretório de destino.
+        dsa_move_arquivo(caminho_zip, CAMINHO_DESTINO)
+        
+        # Exibe um popup informando que o backup foi concluído com sucesso.
+        dsa_exibe_popup("Backup concluído com sucesso!")
+    
+    except Exception as e:
+        
+        # Em caso de erro, exibe um popup informando o erro ocorrido.
+        dsa_exibe_popup(f"Erro durante o backup: {str(e)}", sucesso=False)
+
+# Verifica se o arquivo está sendo executado como o programa principal.
+if __name__ == "__main__":
+
+    # Chama a função principal do projeto 2.
+    dsaprojeto2()
