@@ -93,6 +93,7 @@ def dsa_exibe_popup(mensagem, sucesso=True):
         messagebox.showerror("Erro", mensagem)
     root.destroy() # Fecha a janela Tk após exibir o popup.
 
+
 # ==========================================
 # Função principal do projeto 2.
 # ==========================================
