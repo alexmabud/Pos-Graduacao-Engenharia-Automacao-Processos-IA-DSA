@@ -1,5 +1,5 @@
 # Projeto 2 - Automação do Processo de Backup, Movimentação de Arquivos, Criptografia e Logging com Python
-# Script Versão 1 - Integrado e Corrigido
+
 
 # Imports
 import os
@@ -7,6 +7,10 @@ import shutil
 import zipfile
 import tkinter as tk
 from tkinter import messagebox
+from datetime import datetime
+
+
+# Script Versão 1 - Integrado e Corrigido
 
 # ==========================================
 # CONFIGURAÇÃO DE CAMINHOS (Constantes)
@@ -63,7 +67,7 @@ def dsaprojeto2():
         return
     
     # Nome e caminho do arquivo zip
-    nome_zip = "backup.zip"
+    nome_zip = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
     caminho_zip = os.path.join(CAMINHO_ORIGEM, nome_zip)
     
     # 3. Bloco try/except (Aviso de Erro 2)
@@ -85,3 +89,7 @@ def dsaprojeto2():
 # Verifica se o arquivo está sendo executado como o programa principal.
 if __name__ == "__main__":
     dsaprojeto2()
+
+
+# Script Versão 2 
+
