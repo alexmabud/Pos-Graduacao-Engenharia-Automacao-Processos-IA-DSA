@@ -79,3 +79,11 @@ models/
 .env
 .env.local
 .env.*.local
+
+# Chaves de criptografia (CRÍTICO: nunca suba chaves de criptografia)
+*.key
+chave.key
+
+# Logs do sistema (contém informações do usuário e sistema)
+log.txt
+*.log
