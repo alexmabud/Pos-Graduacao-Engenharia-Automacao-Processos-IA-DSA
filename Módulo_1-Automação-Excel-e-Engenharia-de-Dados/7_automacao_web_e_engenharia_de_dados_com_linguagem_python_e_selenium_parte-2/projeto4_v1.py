@@ -2,12 +2,19 @@
 # Versão 1 - Salvando os Dados em Banco de Dados SQLite
 
 # Imports
+import os  # Importa a biblioteca 'os' para operações com caminhos
 import re  # Importa a biblioteca 're' para operações de expressões regulares
 import time  # Importa a biblioteca 'time' para operações relacionadas ao tempo
 import sqlite3  # Importa a biblioteca 'sqlite3' para interagir com bancos de dados SQLite
 import pandas as pd  # Importa a biblioteca 'pandas' para manipulação de dados
 from selenium import webdriver  # Importa 'webdriver' do Selenium para automação do navegador
 from selenium.webdriver.common.by import By  # Importa 'By' para localizar elementos no navegador
+
+# Define o caminho base onde os dados serão salvos
+CAMINHO_BASE = r"C:\Users\User\OneDrive\Documentos\Python\Dev_Python\Abud Python Learning\DSA\Módulo_1-Automação-Excel-e-Engenharia-de-Dados\7_automacao_web_e_engenharia_de_dados_com_linguagem_python_e_selenium_parte-2"
+
+# Define o caminho completo do banco de dados
+caminho_banco = os.path.join(CAMINHO_BASE, 'laptops.db')
 from selenium.webdriver.support.ui import WebDriverWait  # Import para espera explícita
 from selenium.webdriver.support import expected_conditions as EC  # Import para definir condição de espera
 from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException  # Importa exceções do Selenium
@@ -95,7 +102,7 @@ finally:
 
 # Salva o DataFrame em um banco de dados SQLite
 # Conecta ao banco de dados SQLite (ou cria se não existir)
-conn = sqlite3.connect('laptops.db')
+conn = sqlite3.connect(caminho_banco)
 
 # Salva os dados do DataFrame na tabela 'laptops' do banco de dados
 laptop_df.to_sql('laptops', conn, if_exists='replace', index=False)
@@ -104,4 +111,5 @@ laptop_df.to_sql('laptops', conn, if_exists='replace', index=False)
 conn.close()
 
 # Imprime a quantidade de laptops salvos no banco de dados
-print(f"\nOs dados de {len(laptop_df)} laptops de 15 polegadas foram carregados no banco de dados 'laptops.db'.\n")
+print(f"\nOs dados de {len(laptop_df)} laptops de 15 polegadas foram carregados no banco de dados.\n")
+print(f"Localização: {caminho_banco}")
