@@ -1,0 +1,16 @@
+# Projeto 5 - Detecção Automática de Anomalias em Logs de Pipelines de Dados
+
+# Instruções:
+
+# 1- Instale o Anaconda Python conforme instruções das aulas.
+
+# 2- Abra o terminal ou prompt de comando, navegue até a pasta onde estão os arquivos, crie um ambiente virtual, ative-o e instale as dependências: 
+
+conda create --name dsaprocp5 python=3.13
+conda activate dsaprocp5 (ou: source activate dsaprocp5)
+conda install pip
+pip install -r requirements.txt
+
+# 3- Execute o pipeline assim:
+
+python Projeto5-03-ExecutaAnalise.py
