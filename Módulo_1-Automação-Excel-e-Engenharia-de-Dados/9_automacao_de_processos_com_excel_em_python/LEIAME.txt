@@ -1,0 +1,28 @@
+# Projeto 6 - Automatizando a Geração de Relatórios Financeiros com Word, PDF, Excel e Python
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsaprocp6 python=3.13
+
+# Ative o ambiente:
+
+conda activate dsaprocp6 (ou: source activate dsaprocp6)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute os comandos abaixo:
+
+python gera_documento2.py
+python gera_documento3.py
+python projeto6.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsaprocp6 --all
+
+
+
