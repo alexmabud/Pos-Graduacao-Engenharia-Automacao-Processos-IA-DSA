@@ -1,0 +1,26 @@
+# Projeto 8 - IA com LLM e RAG Para Automatizar a Busca em Documentos Internos da Empresa
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsaprocp8 python=3.13
+
+# Ative o ambiente:
+
+conda activate dsaprocp8 (ou: source activate dsaprocp8)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute o comando abaixo:
+
+streamlit run projeto8.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsaprocp8 --all
+
+
+
