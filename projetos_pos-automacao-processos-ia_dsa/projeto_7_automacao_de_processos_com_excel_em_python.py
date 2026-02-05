@@ -15,6 +15,7 @@ Como funciona:
 3. Todos os cálculos e transformações ocorrem em tempo real
 """
 
+"""
 # ===================================================================================
 # ETAPA 1: IMPORTAÇÃO DOS DADOS DO EXCEL
 # ===================================================================================
@@ -221,6 +222,6 @@ df_final = pd.concat([df_numericas, df_categorical], axis=1)
 # - Todas as transformações aplicadas e prontas para uso
 df_final.head(20)
 
-
+"""
 
 
