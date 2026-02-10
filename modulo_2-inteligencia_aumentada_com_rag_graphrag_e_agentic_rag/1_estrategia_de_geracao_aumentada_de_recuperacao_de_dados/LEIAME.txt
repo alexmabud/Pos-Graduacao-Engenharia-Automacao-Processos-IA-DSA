@@ -1,0 +1,26 @@
+# Estudo de Caso - Estratégias de RAG e Suas Variantes - Sistema de RAG Local com DeepSeek e Ollama
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsaragenv python=3.12
+
+# Ative o ambiente:
+
+conda activate dsaragenv (ou: source activate dsaragenv)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute a app:
+
+streamlit run dsarag.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsaragenv --all
+
+
+
