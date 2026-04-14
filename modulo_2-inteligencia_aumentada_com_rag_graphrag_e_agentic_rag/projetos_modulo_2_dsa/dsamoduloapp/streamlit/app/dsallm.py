@@ -31,7 +31,7 @@ def dsa_query(payload):
 
     # Define a URL da API de inferência do modelo BERT (LLM)
     # https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad
-    API_URL = "https://api-inference.huggingface.co/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad"
+    API_URL = "https://router.huggingface.co/hf-inference/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad"
     
     # Define o cabeçalho com a chave de autenticação obtida do ambiente
     headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_KEY')}"}

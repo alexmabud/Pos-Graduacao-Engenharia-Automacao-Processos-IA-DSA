@@ -182,7 +182,7 @@ def dsa_cria_indice():
 
     # Inicializa o cliente Elasticsearch com o endpoint especificado
     # Coloque o hostname do container do ElasticSearch criado no Docker Desktop conforme demonstrado nas aulas
-    esClient = Elasticsearch("http://f066bbf60f1f:9200")
+    esClient = Elasticsearch("http://elasticsearch:9200")
     
     # Define configurações e mapeamentos para o índice
     indexSettings = {

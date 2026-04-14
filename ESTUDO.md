@@ -63,6 +63,9 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 - **Qual a diferença entre o RAG do Módulo 1 e do Módulo 2?**
   *Resposta:* O do Módulo 1 é focado em automação pontual de documentos internos. O do Módulo 2 é uma arquitetura preparada para produção, com monitoramento de métricas como Hit Rate e MRR.
 
+- **Onde devo inserir minha chave do Hugging Face no projeto?**
+  *Resposta:* A chave deve ser colada na linha 189 do arquivo `docker-compose.yaml`, dentro da variável de ambiente `HUGGINGFACE_KEY` do serviço `app`.
+
 ---
 
 ## 6. Registro de Análise de Arquivos
@@ -73,3 +76,5 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 | `dsarag.py` | Implementação de RAG local com DeepSeek e Semantic Chunking. |
 | `appdsa.py` | Gestão de estado no Streamlit e loop de feedback do usuário. |
 | `dsallm.py` | Integração de APIs de inferência e hashing determinístico de conteúdo. |
+| `docker-compose.yaml` | Orquestração de containers para LLMOps, incluindo Airflow, ElasticSearch e a aplicação principal. |
+

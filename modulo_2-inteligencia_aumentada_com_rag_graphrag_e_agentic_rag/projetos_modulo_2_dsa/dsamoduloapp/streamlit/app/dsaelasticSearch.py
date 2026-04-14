@@ -6,9 +6,9 @@ from elasticsearch import Elasticsearch
 # Função para estabelecer a conexão com o cliente Elasticsearch
 def getEsClient():
 
-    # Inicializa um cliente Elasticsearch apontando para o serviço na URL especificada
-    # Edite a linha abaixo com o nome do hostname do container do ElasticSearch conforme mostrado nas aulas
-    esClient = Elasticsearch("http://f066bbf60f1f:9200")
+    # Inicializa o cliente Elasticsearch com o endpoint especificado
+    # Coloque o hostname do container do ElasticSearch criado no Docker Desktop conforme demonstrado nas aulas
+    esClient = Elasticsearch("http://elasticsearch:9200")
     
     # Retorna o cliente Elasticsearch para uso em outras funções
     return esClient 
