@@ -43,6 +43,10 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 - **Docker Compose**: Orquestra vários "mini-computadores" (containers) para trabalharem juntos. Essencial para que o Streamlit consiga conversar com o PostgreSQL sem erros de rede.
 - **Airflow**: Age como um "despertador inteligente". Ele sabe que a tarefa B só pode começar quando a tarefa A (extração de dados) terminar com sucesso.
 
+### 3.4 Gestão de Repositório e Direitos Autorais
+- **.gitignore**: Arquivo de configuração que instrui o Git sobre quais arquivos ou pastas ele deve ignorar. Essencial para não subir chaves de API, arquivos temporários ou, como fizemos hoje, conteúdos acadêmicos privados.
+- **Git RM --Cached**: Um comando que remove arquivos do índice do Git (preparação para o GitHub) sem deletá-los fisicamente do seu computador. É a técnica ideal para "limpar" um repositório mantendo o backup local.
+
 ---
 
 ## 4. Melhores Práticas de Engenharia (Dicas do Professor)
