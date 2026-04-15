@@ -1,0 +1,35 @@
+# Projeto 2 - SQL, LLM e RAG Para Sistema de Recomendação Personalizado Por IA via API
+
+# Para executar a app:
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsaragp2 python=3.12
+
+# Ative o ambiente:
+
+conda activate dsaragp2 (ou: source activate dsaragp2)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute: 
+
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app
+
+# Abra OUTRO terminal ou prompt de comando, navegue até a pasta com os arquivos e execute: 
+
+python dsa_api_cliente_1.py
+
+python dsa_api_cliente_2.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsaragp2 --all
+
+
+
+
