@@ -87,3 +87,7 @@ chave.key
 # Logs do sistema (contém informações do usuário e sistema)
 log.txt
 *.log
+
+# Conteúdo Acadêmico (Privado - Direitos Autorais DSA)
+modulo_1-Automação-Excel-e-Engenharia-de-Dados/
+modulo_2-inteligencia_aumentada_com_rag_graphrag_e_agentic_rag/

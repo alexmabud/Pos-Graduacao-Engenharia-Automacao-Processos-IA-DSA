@@ -5,22 +5,19 @@ Este arquivo é o seu guia mestre de aprendizado, cobrindo todos os módulos da 
 ---
 
 ## 1. Visão Geral do Projeto
-O projeto está estruturado em dois grandes blocos de competências que conectam a base operacional à inteligência avançada:
-1.  **Módulo 1: Automação, Excel e Engenharia de Dados**: Base sólida de manipulação de dados em massa e automação de sistemas.
-2.  **Módulo 2: Inteligência Aumentada**: Implementação de arquiteturas Generativas e operacionalização (LLMOps).
+O projeto está estruturado para separar o conhecimento acadêmico da Pós-Graduação (DSA) dos projetos autorais desenvolvidos. O foco principal é a **Engenharia de Automação de Processos com IA**, utilizando Python, RAG e LLMOps.
+A nova estrutura prioriza a pasta `projetos_dsa/` para versionamento no GitHub, protegendo os direitos autorais dos materiais didáticos da faculdade.
 
 ---
 
 ## 2. Mapa do Projeto (Estrutura de Conteúdo)
 
-### Módulo 1: Automação & Engenharia de Dados (11 Unidades)
-- **Engenharia com Pandas (Unidades 1-3)**: Foco em limpeza e tratamento estatístico.
-- **Automação OS e Web (Unidades 4-7)**: Uso de scripts para interagir com o sistema e capturar dados via Selenium/Scraping.
-- **Excel Avançado com IA (Unidades 8-11)**: A evolução da automação tradicional usando LLMs para análise.
+Abaixo, a nova organização do repositório:
 
-### Módulo 2: Inteligência Aumentada (Capítulos 1-2)
-- **RAG Local vs Profissional**: Implementações experimentais (DeepSeek) e corporativas (ElasticSearch).
-- **LLMOps**: Gestão do ciclo de vida dos modelos em containers Docker.
+- **`projetos_dsa/`**: Pasta principal contendo todos os projetos práticos e autorais. **(Visível no GitHub)**
+- **`modulo_1-.../`**: Conteúdo teórico e exercícios guiados do Módulo 1. **(Local apenas / Ignorado no Git)**
+- **`modulo_2-.../`**: Conteúdo teórico e implementações de RAG/Agentic RAG do Módulo 2. **(Local apenas / Ignorado no Git)**
+- **`ESTUDO.md`**: Seu guia de aprendizado e registro de evolução.
 
 ---
 
@@ -65,6 +62,9 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 
 - **Onde devo inserir minha chave do Hugging Face no projeto?**
   *Resposta:* A chave deve ser colada na linha 189 do arquivo `docker-compose.yaml`, dentro da variável de ambiente `HUGGINGFACE_KEY` do serviço `app`.
+
+- **Como remover pastas do GitHub sem apagar do meu computador?**
+  *Resposta:* Usamos o comando `git rm -r --cached "nome_da_pasta"`. Isso diz ao Git para "esquecer" a pasta, mas não deleta os arquivos do disco. Em seguida, adicionamos o nome no `.gitignore`.
 
 ---
 
