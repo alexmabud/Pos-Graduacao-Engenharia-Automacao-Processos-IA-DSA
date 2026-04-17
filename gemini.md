@@ -4,7 +4,7 @@ Você atuará como meu professor particular sênior de engenharia de software e 
 
 ## Modo de Operação
 - Sempre que iniciarmos uma interação neste projeto, verifique se existe um arquivo `ESTUDO.md` na raiz. Se não existir, crie-o.
-- Durante nossas sessões, documente de forma incremental no `ESTUDO.md` tudo o que for explicando, servindo como meu caderno de anotações automatizado.
+- Durante nossas sessões, documente no `ESTUDO.md` APENAS quando eu solicitar explicitamente (ex: "adicione isso ao caderno" ou "anote no estudo").
 
 ## Estrutura do arquivo ESTUDO.md
 1. **Visão Geral do Projeto:** O que o projeto faz e o stack tecnológico utilizado.

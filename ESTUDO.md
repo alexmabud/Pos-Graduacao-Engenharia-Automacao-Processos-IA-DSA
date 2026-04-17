@@ -16,8 +16,19 @@ Abaixo, a nova organização do repositório:
 
 - **`projetos_dsa/`**: Pasta principal contendo todos os projetos práticos e autorais. **(Visível no GitHub)**
 - **`modulo_1-.../`**: Conteúdo teórico e exercícios guiados do Módulo 1. **(Local apenas / Ignorado no Git)**
-- **`modulo_2-.../`**: Conteúdo teórico e implementações de RAG/Agentic RAG do Módulo 2. **(Local apenas / Ignorado no Git)**
 - **`ESTUDO.md`**: Seu guia de aprendizado e registro de evolução.
+
+### 3.1 Gestão de Dependências Profissional
+O uso de arquivos de requisitos é a base para colaboração em projetos de software:
+- **`requirements.txt`**: Um arquivo de texto que lista todas as bibliotecas externas necessárias. Evita o erro clássico "na minha máquina funciona".
+- **Comando `pip install -r`**: Automatiza a instalação em massa, garantindo paridade entre ambientes de desenvolvimento e produção.
+
+### 3.2 Stack Tecnológico de APIs com IA
+O projeto atual utiliza:
+- **FastAPI**: Framework moderno para APIs web rápidas e tipadas.
+- **Pydantic**: Validação de dados robusta usando tipos Python modernos.
+- **OpenAI SDK**: Interface para integração de modelos de linguagem de larga escala (LLMs).
+- **Uvicorn**: Servidor ASGI de alta performance para rodar a aplicação FastAPI.
 
 ---
 
@@ -44,8 +55,13 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 - **Airflow**: Age como um "despertador inteligente". Ele sabe que a tarefa B só pode começar quando a tarefa A (extração de dados) terminar com sucesso.
 
 ### 3.4 Gestão de Repositório e Direitos Autorais
-- **.gitignore**: Arquivo de configuração que instrui o Git sobre quais arquivos ou pastas ele deve ignorar. Essencial para não subir chaves de API, arquivos temporários ou, como fizemos hoje, conteúdos acadêmicos privados.
 - **Git RM --Cached**: Um comando que remove arquivos do índice do Git (preparação para o GitHub) sem deletá-los fisicamente do seu computador. É a técnica ideal para "limpar" um repositório mantendo o backup local.
+
+### 3.5 Ambientes Virtuais (Conda)
+O isolamento de ambientes é uma prática de **infraestrutura de software** indispensável:
+- **Isolamento**: Garante que dependências de projetos diferentes não entrem em conflito.
+- **Reprodutibilidade**: Permite que outro desenvolvedor (ou você mesmo no futuro) recrie exatamente as mesmas condições de execução do código usando a mesma versão do Python e bibliotecas.
+- **Conda vs Pip**: Enquanto o pip foca em bibliotecas Python, o Conda consegue gerenciar dependências de sistema (como bibliotecas C++ necessárias para modelos de IA).
 
 ---
 
@@ -69,6 +85,12 @@ O RAG resolve o problema das "Alucinações" dos LLMs:
 
 - **Como remover pastas do GitHub sem apagar do meu computador?**
   *Resposta:* Usamos o comando `git rm -r --cached "nome_da_pasta"`. Isso diz ao Git para "esquecer" a pasta, mas não deleta os arquivos do disco. Em seguida, adicionamos o nome no `.gitignore`.
+
+- **Qual o comando para navegar até uma pasta específica com espaços no nome?**
+  *Resposta:* Usamos o comando `cd "Caminho\Com Espaços"`. É fundamental usar aspas para que o terminal entenda que o caminho é uma única unidade de texto. Além disso, usar o caminho absoluto (começando por C:) garante que você chegue ao destino independente de onde esteja no terminal.
+
+- **O que exatamente o comando `conda activate nome_do_ambiente` faz?**
+  *Resposta:* Ele realiza uma "troca de contexto". Tecnicamente, ele modifica a variável de ambiente `PATH` da sua sessão atual para que os comandos `python` e `pip` apontem para os executáveis isolados dentro da pasta do ambiente escolhido, garantindo que você use as versões e bibliotecas exatas daquele projeto sem interferir no restante do sistema.
 
 ---
 

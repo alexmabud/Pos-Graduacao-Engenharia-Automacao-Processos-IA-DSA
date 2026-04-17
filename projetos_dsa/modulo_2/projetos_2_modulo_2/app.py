@@ -7,17 +7,11 @@ import sqlite3
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from openai import OpenAI
-from asgiref.wsgi import WsgiToAsgi
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
-
-# Cria a instância da app
-app = FastAPI()
-
-# Cria a instância do LLM (Large Language Model)
-llm_dsa = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
 # Função para abrir a conexão com o banco de dados
 def dsa_db_conn():
@@ -54,13 +48,26 @@ def dsa_cria_tabela():
     # Fecha a conexão com o banco de dados
     conn.close()
 
-# Evento de inicialização para criar as tabelas no startup
-@app.on_event("startup")
-async def startup_event():
+# Gerenciador de ciclo de vida (lifespan) para inicialização da app
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Executa na inicialização
     dsa_cria_tabela()
+    yield
+    # Executa no encerramento (se necessário)
+
+# Cria a instância da app com o lifespan configurado
+app = FastAPI(lifespan=lifespan)
+
+# Tenta carregar a chave da API da OpenAI, mas não trava se não existir
+api_key = os.environ.get('OPENAI_API_KEY')
+if api_key and api_key != "SUA_CHAVE_AQUI":
+    llm_dsa = OpenAI(api_key=api_key)
+else:
+    llm_dsa = None
+    print("\nAVISO: Chave da OpenAI não detectada. O sistema de recomendações não funcionará, mas o cadastro de pacientes está ativo.\n")
 
 # Endpoint para cadastrar um novo paciente
-# Veja a explicação no videobook do Capítulo 6
 @app.post("/dsa_cadastra_paciente")
 async def dsa_cadastra_paciente(json_data: dict):
 
@@ -110,12 +117,16 @@ async def dsa_cadastra_paciente(json_data: dict):
 @app.get("/dsa_llm_recomenda_tratamento/")
 async def dsa_llm_recomenda_tratamento(nome_paciente: str, id_paciente: int):
 
+    # Verifica se o serviço de IA está disponível
+    if not llm_dsa:
+        raise HTTPException(status_code = 503, detail = "Serviço de inteligência artificial não configurado. Cadastre uma chave API para usar este recurso.")
+
     # Abre a conexão com o banco de dados
     conn = dsa_db_conn()
     cursor = conn.cursor()
 
-    # Busca os dados do paciente pelo nome e ID
-    cursor.execute("SELECT * FROM dsa_tb_dados_pacientes WHERE nome_paciente = ? AND id = ?", (nome_paciente, id_paciente))
+    # Busca os dados do paciente pelo nome e ID (usando TRIM e LOWER para evitar erros de digitação)
+    cursor.execute("SELECT * FROM dsa_tb_dados_pacientes WHERE LOWER(TRIM(nome_paciente)) = LOWER(?) AND id = ?", (nome_paciente.strip(), id_paciente))
     paciente = cursor.fetchone()
     conn.close()
 
@@ -125,29 +136,35 @@ async def dsa_llm_recomenda_tratamento(nome_paciente: str, id_paciente: int):
         prompt_text = f"Paciente: {paciente['nome_paciente']}\nSintomas: {paciente['sintomas']}\nidade: {paciente['idade']}\ngenero: {paciente['genero']}\nPor favor forneça recomendações de tratamento."
         print(prompt_text)
 
-        # Faz a solicitação ao LLM para obter recomendações de tratamento
-        response = llm_dsa.chat.completions.create(
-            model = "gpt-4o",
-            messages = [
-                {"role": "system", "content": "Você é um especialista médico capaz de recomendar tratamentos personalizados."},
-                {"role": "user", "content": prompt_text}
-            ],
-            max_tokens = 150,
-            n = 1
-        )
+        try:
+            # Faz a solicitação ao LLM para obter recomendações de tratamento
+            response = llm_dsa.chat.completions.create(
+                model = "gpt-4o",
+                messages = [
+                    {"role": "system", "content": "Você é um especialista médico capaz de recomendar tratamentos personalizados."},
+                    {"role": "user", "content": prompt_text}
+                ],
+                max_tokens = 150,
+                n = 1
+            )
 
-        # Extrai as recomendações da resposta do LLM
-        recommendations = response.choices[0].message.content
+            # Extrai as recomendações da resposta do LLM
+            recommendations = response.choices[0].message.content
 
-        # Retorna as recomendações
-        return {"nome_paciente": paciente['nome_paciente'], "recomendações": recommendations}
+            # Retorna as recomendações
+            return {"nome_paciente": paciente['nome_paciente'], "recomendações": recommendations}
+
+        except Exception as e:
+            # Captura erros de API (chave, saldo, limite) ou rede e exibe no log do servidor
+            print(f"\n[ERRO] Falha na chamada ao LLM: {str(e)}\n")
+            
+            # Retorna o erro detalhado para o cliente em vez de um 500 genérico
+            raise HTTPException(status_code = 500, detail = f"Erro no processamento da IA: {str(e)}")
     else:
         # Retorna um erro 404 se o paciente não for encontrado
         raise HTTPException(status_code = 404, detail = "Paciente não encontrado")
 
-# Converte o aplicativo WSGI FastAPI para ASGI
-# Veja a explicação no videobook do Capítulo 6
-asgi_app = WsgiToAsgi(app)
+
 
 
 
