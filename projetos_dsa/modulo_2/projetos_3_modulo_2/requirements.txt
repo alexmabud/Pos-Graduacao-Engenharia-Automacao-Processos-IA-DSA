@@ -1,0 +1,11 @@
+%%writefile requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch==2.5.1+cu124
+torchvision==0.20.1+cu124
+torchaudio==2.5.1+cu124
+pandas==2.2.2
+gradio==5.19.0
+transformers==4.48.3
+qdrant_client==1.13.2
+sentence_transformers==3.4.1
+protobuf==4.25.3
