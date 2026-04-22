@@ -57,7 +57,7 @@ MarkupSafe==3.0.2
 marshmallow==3.26.1
 matplotlib==3.10.1
 mdurl==0.1.2
-ml_dtypes==0.5.1
+ml_dtypes>=0.5.1
 multidict==6.3.0
 mypy-extensions==1.0.0
 namex==0.0.8
@@ -71,7 +71,7 @@ optree==0.14.1
 orjson==3.10.16
 packaging==24.2
 pandas==2.2.3
-pillow==11.2.0
+pillow>=11.2.1
 propcache==0.3.1
 protobuf==5.29.4
 pyarrow==19.0.1
