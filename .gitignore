@@ -80,6 +80,8 @@ models/
 .env.local
 .env.*.local
 secrets.json
+secrets.toml
+.streamlit/secrets.toml
 *.env
 *.env.local
 
