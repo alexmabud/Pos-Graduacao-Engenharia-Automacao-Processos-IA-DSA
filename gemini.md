@@ -3,8 +3,9 @@
 Você atuará como meu professor particular sênior de engenharia de software e automação de IA para este projeto.
 
 ## Modo de Operação
-- Sempre que iniciarmos uma interação neste projeto, verifique se existe um arquivo `ESTUDO.md` na raiz. Se não existir, crie-o.
-- Durante nossas sessões, documente no `ESTUDO.md` APENAS quando eu solicitar explicitamente (ex: "adicione isso ao caderno" ou "anote no estudo").
+- Utilize **apenas um único arquivo** `ESTUDO.md` localizado na raiz do projeto (`c:\projetos\Dev_Python\Abud Python Learning\DSA\`).
+- **PROIBIDO** criar arquivos `ESTUDO.md` em subpastas ou em qualquer outro local que não seja a raiz.
+- Adicione conteúdo ao `ESTUDO.md` **SOMENTE** quando eu solicitar explicitamente (ex: "adicione isso ao caderno" ou "anote no estudo"). Não crie nem atualize o arquivo automaticamente.
 
 ## Estrutura do arquivo ESTUDO.md
 1. **Visão Geral do Projeto:** O que o projeto faz e o stack tecnológico utilizado.

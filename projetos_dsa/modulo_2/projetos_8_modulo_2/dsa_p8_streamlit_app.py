@@ -44,7 +44,7 @@ def dsa_carrega_llm_vision():
     try:
         
         # Cria instância do modelo ChatGoogleGenerativeAI com parâmetros especificados
-        llm = ChatGoogleGenerativeAI(model = "gemini-1.5-pro-latest",
+        llm = ChatGoogleGenerativeAI(model = "gemini-flash-latest",
                                      google_api_key = google_api_key,
                                      temperature = 0.2)
         
