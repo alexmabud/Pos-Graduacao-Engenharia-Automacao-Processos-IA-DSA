@@ -19,8 +19,8 @@ cachetools==5.5.2
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
-chroma-hnswlib==0.7.6
-chromadb==0.5.23
+# chroma-hnswlib==0.7.6 # Comentado: Já instalado via Conda para evitar erro de compilação no Windows
+# chromadb==0.5.23 # Comentado: Já instalado via Conda
 click==8.1.8
 cohere==5.15.0
 coloredlogs==15.0.1

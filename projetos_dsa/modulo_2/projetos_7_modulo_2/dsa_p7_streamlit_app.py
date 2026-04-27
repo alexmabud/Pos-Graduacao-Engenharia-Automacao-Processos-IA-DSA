@@ -50,7 +50,7 @@ def dsa_carrega_llm_resposta_final():
     print("Carregando LLM Groq...") 
     
     try:
-        llm = ChatGroq(api_key = groq_api_key, model = "meta-llama/llama-4-maverick-17b-128e-instruct", temperature = 0.1)
+        llm = ChatGroq(api_key = groq_api_key, model = "llama-3.3-70b-versatile", temperature = 0.1)
         return llm
     except Exception as e:
         st.error(f"Erro ao carregar LLM: {e}")
@@ -116,7 +116,7 @@ def dsa_route_query_node(state: GraphState) -> dict:
         # **CRIA LLM DEDICADO PARA ROTEAMENTO COM TEMPERATURA MAIS ALTA**
         # Aqui podemos usar um modelo mais simples, como um SLM
         router_llm = ChatGroq(api_key = groq_api_key,
-                              model = "llama3-8b-8192",
+                              model = "llama-3.1-8b-instant",
                               temperature = 0.4)
 
         # Executa o roteador
