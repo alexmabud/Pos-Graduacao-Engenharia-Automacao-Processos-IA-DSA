@@ -211,7 +211,7 @@ tzdata==2025.2
 urllib3==2.4.0
 uv==0.6.14
 uvicorn==0.34.2
-uvloop==0.21.0
+# uvloop==0.21.0 # Removido: Não suportado no Windows
 watchdog==6.0.0
 watchfiles==1.0.5
 wcwidth==0.2.13
