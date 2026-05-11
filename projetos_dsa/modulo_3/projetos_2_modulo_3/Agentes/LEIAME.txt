@@ -1,0 +1,26 @@
+# Projeto 2 - Construção de Multi-Agentes de IA com CrewAI e Deploy via API com Docker
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name agenticaidsap2 python=3.12
+
+# Ative o ambiente:
+
+conda activate agenticaidsap2 (ou: source activate agenticaidsap2)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute os scripts com o comando:
+
+python dsa_time_agentes.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name agenticaidsap2 --all
+
+
+

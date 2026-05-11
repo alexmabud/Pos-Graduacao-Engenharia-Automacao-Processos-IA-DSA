@@ -1,0 +1,16 @@
+# Projeto 2 - Construção de Multi-Agentes de IA com CrewAI e Deploy via API com Docker
+
+# Abra a janela do Docker Desktop e mantenha aberta ao executar os comandos abaixo.
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar a imagem Docker:
+
+docker build -t dsa-multi-agentes-api .
+
+# Execute o comando abaixo para rodar o container
+
+docker run -d --name dsap1deploy -p 8000:8000 --env-file .env dsa-multi-agentes-api
+
+# Execute o comando abaixo para executar a aplicação cliente e consumir a API:
+
+python dsa_cliente_api.py
+
