@@ -2,7 +2,7 @@
 
 # Imports
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from crewai import Agent, Task, Crew
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.tools import WikipediaQueryRun
@@ -12,8 +12,8 @@ from langchain_core.tools import Tool
 
 print('\nIniciando o Trabalho do Time de Agentes Jurídicos Baseados em IA Generativa!\n')
 
-# Carrega o arquivo de variáveis de ambiente
-load_dotenv(override=True)
+# Carrega o arquivo de variáveis de ambiente (buscando em pastas superiores se necessário)
+load_dotenv(find_dotenv(), override=True)
 
 # Verifica se a variável de ambiente da API foi carregada
 api_key = os.getenv("OPENAI_API_KEY")
@@ -22,12 +22,12 @@ if not api_key:
 
 print('\nAPI Para os LLMs dos Agentes Carregada com Sucesso!\n')
 
-# Inicializa aa ferramenta de busca genérica
+# Inicializa a ferramenta de busca genérica
 search_tool = Tool(name = "DuckDuckGo Search",
                    func = lambda query: DuckDuckGoSearchRun().run(query),
                    description = "Executa buscas na web usando o DuckDuckGo")
 
-# Inicializa aa ferramenta de busca na Wikipedia
+# Inicializa a ferramenta de busca na Wikipedia
 wikipedia_tool = Tool(name = "Wikipedia Search",
                       func = lambda query: WikipediaQueryRun(api_wrapper = WikipediaAPIWrapper()).run(query),
                       description = "Busca informações na Wikipedia")

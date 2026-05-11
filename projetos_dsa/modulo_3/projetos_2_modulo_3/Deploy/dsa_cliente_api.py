@@ -7,7 +7,7 @@ import json
 print("\nO Time de Multi-Agentes de IA Está Processando Sua Requisição. Aguarde...\n")
 
 # URL da API
-API_URL = "http://localhost:8000/execute"
+API_URL = "http://localhost:8001/execute"
 
 # Tópico a ser pesquisado
 data = {"topic": "Jurisprudência de prisão em segunda instância no Brasil"}
