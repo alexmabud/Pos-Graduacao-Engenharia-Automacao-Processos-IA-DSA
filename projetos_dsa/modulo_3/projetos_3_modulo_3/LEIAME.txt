@@ -1,0 +1,26 @@
+# Projeto 3 - Re-Ranking, Agentic RAG com LangGraph e LM Studio Para Assistente de Processo de Licitação
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsap3 python=3.12
+
+# Ative o ambiente:
+
+conda activate dsap3 (ou: source activate dsap3)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute o script:
+
+python dsa_cria_rag.py
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsap3 --all
+
+
+
