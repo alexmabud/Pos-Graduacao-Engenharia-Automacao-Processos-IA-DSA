@@ -1,0 +1,46 @@
+# Projeto 5 - Construção e Deploy de Routing com Multi-Agentes de IA
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsap5 python=3.12
+
+# Ative o ambiente:
+
+conda activate dsap5 (ou: source activate dsap5)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute os scripts:
+
+streamlit run dsa_app_p5.py
+
+# Aqui estão exemplos para cada tipo de pergunta mencionada:
+
+# Factual:
+
+# Informe qual é a capital da Espanha.
+# Informe quem inventou o telefone.
+# Informe quando foi fundada a Microsoft.
+
+# Pesquisa:
+
+# Como funciona a Inteligência Artificial aplicada em veículos autônomos?
+# Quais são os impactos econômicos das mudanças climáticas?
+# Quais avanços recentes ocorreram no tratamento do Alzheimer?
+
+# Geral:
+
+# Me dê sugestões para aprender um novo idioma.
+# Explique brevemente o conceito de economia circular.
+# Conte-me algo interessante sobre astronomia.
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsap5 --all
+
+
+
