@@ -1,0 +1,39 @@
+# Projeto 4 - Encadeamento de Prompts, Raciocínio, CoT e Agentic RAG em Contexto Multi-Agentes Para App de Análise de Contratos
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsap4 python=3.12
+
+# Ative o ambiente:
+
+conda activate dsap4 (ou: source activate dsap4)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute os scripts:
+
+python dsa_app_p4_v1.py
+streamlit run dsa_app_p4_v2.py
+
+# Exemplos de perguntas:
+
+# Qual o Objeto do Contrato?
+# Quais são as Obrigações do Contratante?
+# Em caso de rescisão por descumprimento de qualquer obrigação, a parte inadimplente ficará sujeita ao pagamento de multa compensatória de qual valor?
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsap4 --all
+
+# Usaremos 3 LLMs:
+
+- llama3-70b-8192
+- qwen-2.5-32b
+- llama-3.3-70b-versatile
+
+
+
