@@ -13,14 +13,24 @@ conda activate dsap6 (ou: source activate dsap6)
 conda install pip
 pip install -r requirements.txt 
 
-# Execute o script:
+# Faça a autenticação no LogFire, executando o comando abaixo no terminal ou prompt.
+# https://pydantic.dev/logfire
+logfire auth
+
+# Execute os scripts:
 
 python dsa_p6_setup_rag.py
+streamlit run dsa_p6_streamlit_app.py
+
+# Perguntas de exemplo:
+
+# Meu wifi está desconectando, o que fazer?
+# Não estou conseguindo instalar o Anaconda Python.
+# Estou recebendo tela azul da morte, o que fazer?
+# O CoPilot está entregando respostas erradas, o que fazer?
+# Estou tentando instalar o Visual Studio. Qual a versão mais recente?
 
 # Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
 
 conda deactivate
 conda remove --name dsap6 --all
-
-
-

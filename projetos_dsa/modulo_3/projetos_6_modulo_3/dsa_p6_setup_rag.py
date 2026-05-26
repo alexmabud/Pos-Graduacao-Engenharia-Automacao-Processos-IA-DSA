@@ -90,7 +90,3 @@ if __name__ == "__main__":
         print(f"Certifique-se de ter seus PDFs na pasta '{DATA_DIR}'.\n")
     else:
         print("\nA configuração do RAG falhou. Verifique os erros acima.")
-
-
-
-
