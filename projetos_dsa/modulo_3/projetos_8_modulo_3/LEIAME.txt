@@ -1,0 +1,30 @@
+# Projeto 8 - Agentes de IA Para Deep Research com OpenAI Agents SDK e Firecrawl
+
+# Abra o terminal ou prompt de comando, navegue até a pasta com os arquivos e execute o comando abaixo para criar um ambiente virtual:
+
+conda create --name dsap8 python=3.12
+
+# Ative o ambiente:
+
+conda activate dsap8 (ou: source activate dsap8)
+
+# Instale o pip e as dependências:
+
+conda install pip
+pip install -r requirements.txt 
+
+# Execute os scripts:
+
+streamlit run dsa_app_p8.py
+
+# Exemplo de tópico de pesquisa:
+
+# O que é áudio Hi-Fi e quais dispositivos usar?
+
+# Use os comandos abaixo para desativar o ambiente virtual e remover o ambiente (opcional):
+
+conda deactivate
+conda remove --name dsap8 --all
+
+
+
