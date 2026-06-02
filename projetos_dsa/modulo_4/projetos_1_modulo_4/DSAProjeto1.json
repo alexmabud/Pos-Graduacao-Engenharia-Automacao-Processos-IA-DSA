@@ -1,0 +1,277 @@
+{
+  "name": "DSAProjeto1",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        -256
+      ],
+      "id": "e6a4385a-8a76-4c97-a252-e23c185baec1",
+      "name": "DSA - Inicia ao Clicar em Execute Workflow",
+      "notesInFlow": false,
+      "notes": "DSA Log - Node de início do workflow."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1125794e-cfc3-4897-8d84-57b5830ee684",
+              "name": "dsa_url_arquivo",
+              "value": "https://jpfgjvecleihjvaxktsw.supabase.co/storage/v1/object/public/bucket1/curriculo_exemplo.pdf",
+              "type": "string"
+            },
+            {
+              "id": "e9bbd9b9-9675-4b7c-99d2-2ae2dd117070",
+              "name": "dsa_job_description",
+              "value": "A SunTech é uma startup financiada por capital de risco que está construindo uma nova infraestrutura de busca para um sistema de patentes. Aproveitando os avanços recentes e contínuos em aprendizado de máquina e processamento de linguagem natural, estamos construindo sistemas para conduzir buscas de patentes com mais rapidez e precisão do que qualquer ser humano consegue atualmente. Somos uma equipe pequena com uma cultura amigável e, em sua maioria, remota. Sobre a equipe: A SunTech é atualmente composta por 9 pessoas. Trabalhamos remotamente, mas nossa sede fica no Rio de Janeiro, RJ. Buscamos pessoas curiosas e dedicadas. Sobre a vaga: Junte-se à equipe da SunTech, uma startup focada em revolucionar a busca de patentes por meio de tecnologia avançada. Como engenheiro de software nesta função, você será responsável por desenvolver grafos de conversação, integrar processos gramaticais e manter uma base de código robusta. O candidato ideal terá experiência em envio de produtos, trabalho com plataformas em nuvem e familiaridade com ferramentas de conteinerização. Além disso, experiência com ferramentas de prompting, pacotes de PLN e segurança cibernética será um diferencial. Local do candidato: Brasil. Forte preferência se estiver em São Paulo, Rio de Janeiro ou Blumenau, mas aberto a qualquer outro lugar. Você irá: *Enviar produtos de alta qualidade. *Utilizar bibliotecas de prompting, como Langchain e LangGraph, para desenvolver grafos de conversação e fluxos de avaliação. *Colaborar com linguistas para integrar nossos processos internos de gramática e mapeamento de entidades em um algoritmo iterável de busca de patentes, pilotado por agentes de patentes de IA. *Administrar a base de código, garantindo que ela permaneça robusta à medida que escala. *Requisitos do candidato: *Requisitos mínimos que um candidato deve atender. *Ter tido propriedade sobre aspectos do desenvolvimento de produtos em organizações pequenas e grandes em diferentes momentos da sua carreira. *Ter usado Langchain, LangGraph ou outras ferramentas de prompting em produção ou em projetos pessoais. *Familiaridade com pacotes de PLN, como Spacy, Stanza, PyTorch e/ou Tensorflow. *Enviar um produto funcional para usuários, seja como parte de uma equipe. ou por conta própria. \\nIsso significa que você tem: \\nProficiência com AWS, Azure ou Google Cloud, \\nFamiliaridade com ferramentas de conteinerização e orquestração como Docker e Kubernetes e \\nPipelines de CI/CD criados e mantidos.\\nMais de 5 anos de experiência como engenheiro de software\\n\\nDesejáveis\\nO que pode fazer seu candidato se destacar\\nExperiência com segurança cibernética.\\n\\nEmpresas ideais\\nStartups bem-sucedidas em estágio de crescimento B2B com forte ênfase em produto e design. Organizações com gestão competente onde o talento é denso e protegido.\\n\\nAsana, Airtable, Benchling, Figma, Gusto, Stripe, Plaid, Smartsheet, Freshworks, Intercom, Sprout Social, Sisense, InsightSquared, DocuSign, Dropbox, Slack, Trello, Qualtrics, Datadog, HubSpot, Shopify, Zendesk, SurveyMonkey, Squarespace, Mixpanel, Github, Atlassian, Zapier, PagerDuty, Box, Snowflake, Greenhouse, Lever, Pendo, Lucidchart, Asana, New Relic, Kajabi, Veeva Systems, Adyen, Twilio, Workday, ServiceNow, Confluent.\\n",
+              "type": "string"
+            },
+            {
+              "id": "92241258-e974-4418-b594-6791e576ba6b",
+              "name": "dsa_prompt",
+              "value": "Você é o recrutador experiente, é rigoroso e presta atenção extra aos detalhes de um currículo. Você trabalha com empresas e encontra talentos para as vagas delas. Você avalia qualquer currículo com muita atenção e crítica. Se o candidato for um saltador de empregos, você percebe isso e nos diz. Você precisa dizer se o candidato da nossa base é adequado para esta vaga. Retorne 4 coisas: 1. Porcentagem (incremento de 10%) de correspondência do currículo do candidato com a vaga. 2. Resumo curto - deve usar linguagem simples e ser curto. Forneça a decisão final sobre o candidato com base na porcentagem de correspondência e nas habilidades do candidato versus os requisitos da vaga. 3. Resuma por que este candidato se adequa a esta vaga. 4. Resuma por que este candidato não se adequa a esta vaga.",
+              "type": "string"
+            },
+            {
+              "id": "38d00342-ee8e-486b-abba-97e2d68e77fd",
+              "name": "dsa_json_schema",
+              "value": "{   \"name\": \"candidate_evaluation\",   \"description\": \"Dados estruturados para avaliar um candidato com base na experiência e adequação\",   \"strict\": true,   \"schema\": {     \"type\": \"object\",     \"properties\": {       \"percentage\": {         \"type\": \"integer\",         \"description\": \"Pontuação percentual geral de adequação do candidato\"       },       \"summary\": {         \"type\": \"string\",         \"description\": \"Um breve resumo da experiência, personalidade e quaisquer pontos fortes ou preocupações notáveis do candidato\"       },       \"reasons-suit\": {         \"type\": \"array\",         \"items\": {           \"type\": \"object\",           \"properties\": {             \"name\": {               \"type\": \"string\",               \"description\": \"Título da força ou razão de adequação\"             },             \"text\": {               \"type\": \"string\",               \"description\": \"Descrição de como essa experiência ou habilidade corresponde aos requisitos do trabalho\"             }           },           \"required\": [             \"name\",             \"text\"           ],           \"additionalProperties\": false         },         \"description\": \"Lista de razões pelas quais o candidato é adequado para o cargo\"       },       \"reasons-notsuit\": {         \"type\": \"array\",         \"items\": {           \"type\": \"object\",           \"properties\": {             \"name\": {               \"type\": \"string\",               \"description\": \"Título da preocupação ou motivo da inadequação\"             },             \"text\": {               \"type\": \"string\",               \"description\": \"Descrição de como esse fator pode não estar alinhado com os requisitos do trabalho\"             }           },           \"required\": [             \"name\",             \"text\"           ],           \"additionalProperties\": false         },         \"description\": \"Lista de motivos pelos quais o candidato pode não ser adequado para o cargo\"       }     },     \"required\": [       \"percentage\",       \"summary\",       \"reasons-suit\",       \"reasons-notsuit\"     ],     \"additionalProperties\": false   } }",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1616,
+        -256
+      ],
+      "id": "2c542d75-b27e-4009-907f-49284a841225",
+      "name": "DSA - Definindo Parametros",
+      "notes": "DSA Log - Definição de parâmetros para a análise com IA."
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.dsa_url_arquivo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1392,
+        -256
+      ],
+      "id": "79c4333e-1d01-438f-a060-cd4eea51e2da",
+      "name": "DSA - Download CV",
+      "notes": "DSA Log - Download do currículo em PDF para extração do texto."
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        -256
+      ],
+      "id": "7b06d002-a23b-4eaa-baea-bcaaf9c8eaf8",
+      "name": "DSA - Extrair Texto do PDF",
+      "notes": "DSA Log - Extração de texto do PDF."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"model\": \"gpt-5-mini\",\n \"messages\": [\n {\n \"role\": \"system\",\n \"content\": \"{{ $('DSA - Definindo Parametros').item.json.dsa_prompt }}\"\n },\n {\n \"role\": \"user\",\n \"content\": {{ JSON.stringify(encodeURIComponent($json.text))}}\n }\n ],\n \"response_format\":{ \"type\": \"json_schema\", \"json_schema\": {{ $('DSA - Definindo Parametros').item.json.dsa_json_schema }}\n\n }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -944,
+        -256
+      ],
+      "id": "05b4eec3-03a8-4b22-b013-9de7edd6fe6c",
+      "name": "DSA - Análise com IA",
+      "credentials": {
+        "openAiApi": {
+          "id": "vVwS68aodeR1vl4z",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Análise com IA."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "90eb7259-e910-4ff5-8041-acbc2dfe1caf",
+              "name": "dsa_json_parsed",
+              "value": "={{ JSON.parse($json.choices[0].message.content) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -256
+      ],
+      "id": "8c71db54-7ea0-4bae-9c4f-2e043ba1e1bc",
+      "name": "DSA - Parse JSON",
+      "notes": "DSA Log - Extrai da resposta do modelo de IA somente o que precisamos."
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "options": {
+          "fileName": "resultado.xls"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -496,
+        -256
+      ],
+      "id": "c26d937d-0038-4a37-8fa7-db87d3704441",
+      "name": "DSA - Salva Resultado Excel",
+      "notes": "DSA Log - Salva os resultados em formato Excel."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 1\n\n**Fluxo de Automação com IA Para Análise de Currículos**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1456,
+        -608
+      ],
+      "typeVersion": 1,
+      "id": "a8ae833c-e2fc-4475-9eb7-439b3bd2e84f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -256
+      ],
+      "id": "ee386bd3-47b9-4415-a536-25c5743ae05b",
+      "name": "DSA - Final",
+      "notes": "DSA Log - Node de fim do workflow."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "DSA - Inicia ao Clicar em Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "DSA - Definindo Parametros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Definindo Parametros": {
+      "main": [
+        [
+          {
+            "node": "DSA - Download CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Download CV": {
+      "main": [
+        [
+          {
+            "node": "DSA - Extrair Texto do PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Extrair Texto do PDF": {
+      "main": [
+        [
+          {
+            "node": "DSA - Análise com IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Análise com IA": {
+      "main": [
+        [
+          {
+            "node": "DSA - Parse JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Parse JSON": {
+      "main": [
+        [
+          {
+            "node": "DSA - Salva Resultado Excel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Salva Resultado Excel": {
+      "main": [
+        [
+          {
+            "node": "DSA - Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "51cad5ea-f6a6-4bf9-b51b-c2485b06fca9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c64779e7aa4618f35cd134c1d52c78d362e53f56580c29a2fc2d99376524584"
+  },
+  "id": "t4yK3BkNIjWIHGnh",
+  "tags": []
+}

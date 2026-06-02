@@ -1,0 +1,124 @@
+# Projeto 1 - Fluxo de Automação com IA Para Análise de Currículos
+# Instruções e Configurações Usadas no Projeto
+
+
+# dsa_url_arquivo
+
+https://axznttwbpxhgcsqjgakg.supabase.co/storage/v1/object/public/dsaprojeto1/curriculo_exemplo.pdf
+
+
+# dsa_job_description
+
+A SunTech é uma startup financiada por capital de risco que está construindo uma nova infraestrutura de busca para um sistema de patentes. Aproveitando os avanços recentes e contínuos em aprendizado de máquina e processamento de linguagem natural, estamos construindo sistemas para conduzir buscas de patentes com mais rapidez e precisão do que qualquer ser humano consegue atualmente. Somos uma equipe pequena com uma cultura amigável e, em sua maioria, remota. Sobre a equipe: A SunTech é atualmente composta por 9 pessoas. Trabalhamos remotamente, mas nossa sede fica no Rio de Janeiro, RJ. Buscamos pessoas curiosas e dedicadas. Sobre a vaga: Junte-se à equipe da SunTech, uma startup focada em revolucionar a busca de patentes por meio de tecnologia avançada. Como engenheiro de software nesta função, você será responsável por desenvolver grafos de conversação, integrar processos gramaticais e manter uma base de código robusta. O candidato ideal terá experiência em envio de produtos, trabalho com plataformas em nuvem e familiaridade com ferramentas de conteinerização. Além disso, experiência com ferramentas de prompting, pacotes de PLN e segurança cibernética será um diferencial. Local do candidato: Brasil. Forte preferência se estiver em São Paulo, Rio de Janeiro ou Blumenau, mas aberto a qualquer outro lugar. Você irá: *Enviar produtos de alta qualidade. *Utilizar bibliotecas de prompting, como Langchain e LangGraph, para desenvolver grafos de conversação e fluxos de avaliação. *Colaborar com linguistas para integrar nossos processos internos de gramática e mapeamento de entidades em um algoritmo iterável de busca de patentes, pilotado por agentes de patentes de IA. *Administrar a base de código, garantindo que ela permaneça robusta à medida que escala. *Requisitos do candidato: *Requisitos mínimos que um candidato deve atender. *Ter tido propriedade sobre aspectos do desenvolvimento de produtos em organizações pequenas e grandes em diferentes momentos da sua carreira. *Ter usado Langchain, LangGraph ou outras ferramentas de prompting em produção ou em projetos pessoais. *Familiaridade com pacotes de PLN, como Spacy, Stanza, PyTorch e/ou Tensorflow. *Enviar um produto funcional para usuários, seja como parte de uma equipe. ou por conta própria. \nIsso significa que você tem: \nProficiência com AWS, Azure ou Google Cloud, \nFamiliaridade com ferramentas de conteinerização e orquestração como Docker e Kubernetes e \nPipelines de CI/CD criados e mantidos.\nMais de 5 anos de experiência como engenheiro de software\n\nDesejáveis\nO que pode fazer seu candidato se destacar\nExperiência com segurança cibernética.\n\nEmpresas ideais\nStartups bem-sucedidas em estágio de crescimento B2B com forte ênfase em produto e design. Organizações com gestão competente onde o talento é denso e protegido.\n\nAsana, Airtable, Benchling, Figma, Gusto, Stripe, Plaid, Smartsheet, Freshworks, Intercom, Sprout Social, Sisense, InsightSquared, DocuSign, Dropbox, Slack, Trello, Qualtrics, Datadog, HubSpot, Shopify, Zendesk, SurveyMonkey, Squarespace, Mixpanel, Github, Atlassian, Zapier, PagerDuty, Box, Snowflake, Greenhouse, Lever, Pendo, Lucidchart, Asana, New Relic, Kajabi, Veeva Systems, Adyen, Twilio, Workday, ServiceNow, Confluent.\n
+
+
+# dsa_prompt
+
+Você é o recrutador experiente, é rigoroso e presta atenção extra aos detalhes de um currículo. Você trabalha com empresas e encontra talentos para as vagas delas. Você avalia qualquer currículo com muita atenção e crítica. Se o candidato for um saltador de empregos, você percebe isso e nos diz. Você precisa dizer se o candidato da nossa base é adequado para esta vaga. Retorne 4 coisas: 1. Porcentagem (incremento de 10%) de correspondência do currículo do candidato com a vaga. 2. Resumo curto - deve usar linguagem simples e ser curto. Forneça a decisão final sobre o candidato com base na porcentagem de correspondência e nas habilidades do candidato versus os requisitos da vaga. 3. Resuma por que este candidato se adequa a esta vaga. 4. Resuma por que este candidato não se adequa a esta vaga.
+
+
+# dsa_json_schema
+
+{
+  "name": "candidate_evaluation",
+  "description": "Dados estruturados para avaliar um candidato com base na experiência e adequação",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "percentage": {
+        "type": "integer",
+        "description": "Pontuação percentual geral de adequação do candidato"
+      },
+      "summary": {
+        "type": "string",
+        "description": "Um breve resumo da experiência, personalidade e quaisquer pontos fortes ou preocupações notáveis do candidato"
+      },
+      "reasons-suit": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Título da força ou razão de adequação"
+            },
+            "text": {
+              "type": "string",
+              "description": "Descrição de como essa experiência ou habilidade corresponde aos requisitos do trabalho"
+            }
+          },
+          "required": [
+            "name",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        "description": "Lista de razões pelas quais o candidato é adequado para o cargo"
+      },
+      "reasons-notsuit": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Título da preocupação ou motivo da inadequação"
+            },
+            "text": {
+              "type": "string",
+              "description": "Descrição de como esse fator pode não estar alinhado com os requisitos do trabalho"
+            }
+          },
+          "required": [
+            "name",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        "description": "Lista de motivos pelos quais o candidato pode não ser adequado para o cargo"
+      }
+    },
+    "required": [
+      "percentage",
+      "summary",
+      "reasons-suit",
+      "reasons-notsuit"
+    ],
+    "additionalProperties": false
+  }
+}
+
+
+# API da OpenAI
+
+https://api.openai.com/v1/chat/completions
+
+
+# JSON da API da OpenAI
+
+{
+ "model": "gpt-5-mini",
+ "messages": [
+ {
+ "role": "system",
+ "content": "{{ $('DSA - Definindo Parametros').item.json.dsa_prompt }}"
+ },
+ {
+ "role": "user",
+ "content": {{ JSON.stringify(encodeURIComponent($json.text))}}
+ }
+ ],
+ "response_format":{ "type": "json_schema", "json_schema": {{ $('DSA - Definindo Parametros').item.json.dsa_json_schema }}
+
+ }
+}
+
+
+# Instrução do Parser JSON - dsa_json_parsed
+
+{{ JSON.parse($json.choices[0].message.content) }}
+
+
+
+
