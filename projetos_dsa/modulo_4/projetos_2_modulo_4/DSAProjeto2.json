@@ -1,0 +1,412 @@
+{
+  "name": "DSAProjeto2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -944,
+        96
+      ],
+      "id": "2f11fad4-5c06-4518-a1b4-817d32e3f301",
+      "name": "Execução Agendada",
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Node de início do workflow com agendamento."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 2\n\n**Fluxo de Automação com IA Para Limpeza e Processamento de Dados**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "13906dc5-7601-48c9-a243-42e348952cc4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "dc6156dd-353d-425c-9cf6-802fe9f803fb",
+      "name": "Extração de Dados",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        -496,
+        96
+      ],
+      "typeVersion": 1,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de extração de dados de texto do arquivo PDF."
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "data = _input.first().json.text\nreturn {\"data\": data}"
+      },
+      "id": "3092f448-13cd-43fc-be83-d289b60e3e39",
+      "name": "Filtro de Dados (Python)",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -272,
+        96
+      ],
+      "typeVersion": 2,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de filtro de dados usando código Python."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Resuma os dados em 4-5 linhas ou menos: {{ $json.data }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "98443db3-438f-4247-9510-bb9b2351f9b5",
+      "name": "Agente de IA",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -48,
+        96
+      ],
+      "typeVersion": 2.2,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de execução de um Agente de IA."
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ '{ \"summary\": \"' + $json.output + '\" }' }}",
+        "options": {}
+      },
+      "id": "24f03db7-44fd-460b-aa50-93ffb3428d2f",
+      "name": "Sumarização e Limpeza dos Dados",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        304,
+        96
+      ],
+      "typeVersion": 3.4,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de sumarização e limpeza usando formato JSON."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://qwen-qwen-tts-demo.hf.space/gradio_api/call/predict",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    \"{{ $json.summary }}\",\n    \"Dylan\"\n  ]\n} ",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "70b76cba-2b5c-4521-b410-5ab03c784ea6",
+      "name": "Processamento de Dados 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        528,
+        96
+      ],
+      "typeVersion": 4.2,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de processamento de dados via API."
+    },
+    {
+      "parameters": {
+        "url": "=https://qwen-qwen-tts-demo.hf.space/gradio_api/call/predict/{{ $json.event_id }}",
+        "options": {}
+      },
+      "id": "c3ccfc4d-549f-4ffc-84ad-8d25cf294dd8",
+      "name": "Processamento de Dados 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        752,
+        96
+      ],
+      "typeVersion": 4.2,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de processamento de dados através de API."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7efed1c-af46-4f2d-8da7-08b783248f19",
+              "name": "audioUrl",
+              "type": "string",
+              "value": "={{ $json.audioUrl }}"
+            },
+            {
+              "id": "924be2a2-9c3b-4d00-9e96-65b5d86e350c",
+              "name": "summary",
+              "type": "string",
+              "value": "={{ $('Sumarização e Limpeza dos Dados').item.json.summary }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e74517b1-2829-4779-a4d8-b1ea336f2895",
+      "name": "Formatação dos Dados",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1200,
+        96
+      ],
+      "executeOnce": false,
+      "typeVersion": 3.4,
+      "alwaysOutputData": false,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de formatação dos dados."
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "=dsa-p2-n8n-491085408077",
+        "fileName": "=saida/{{ $json.audioUrl }}",
+        "binaryData": false,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        96
+      ],
+      "id": "017271d3-c76a-478f-8c61-4cce2eef513f",
+      "name": "Upload do Resultado Para o Destino na AWS",
+      "credentials": {
+        "aws": {
+          "id": "FhQrWJhiZ9B07If4",
+          "name": "AWS account"
+        }
+      },
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de upload do arquivo resultante para a AWS."
+    },
+    {
+      "parameters": {
+        "bucketName": "dsa-p2-n8n-491085408077",
+        "fileKey": "entrada/curriculo_exemplo.pdf"
+      },
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        96
+      ],
+      "id": "fd73e634-e2a8-4a65-9c1f-9bd9f689ca3e",
+      "name": "Download da Fonte de Dados na AWS",
+      "credentials": {
+        "aws": {
+          "id": "FhQrWJhiZ9B07If4",
+          "name": "AWS account"
+        }
+      },
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de download do arquivo da fonte em um bucket S3.\n"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        96
+      ],
+      "id": "d97b280d-c106-4566-bef7-985d60a50b87",
+      "name": "Fim"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.data || $json || \"\";\n\n// Caso 1: Se já foi analisado JSON com data[0].url\nif (Array.isArray($json.data)) {\n  return {\n    json: {\n      audioUrl: $json.data[0]?.url || null,\n      rawJson: $json.data\n    }\n  };\n}\n\n// Caso 2: Manipular texto SSE bruto\nconst match = typeof raw === \"string\" ? raw.match(/data:\\s*(\\[[^\\]]+\\])/s) : null;\n\nif (match) {\n  try {\n    const parsed = JSON.parse(match[1]);\n    return {\n      json: {\n        audioUrl: parsed?.[0]?.url || null,\n        rawJson: parsed\n      }\n    };\n  } catch (e) {\n    return {\n      json: {\n        error: \"DSA - Falha ao analisar SSE JSON\",\n        raw\n      }\n    };\n  }\n}\n\n// Caso 3: Se nenhum dos dois funcionou\nreturn {\n  json: {\n    error: \"DSA - URL do áudio não encontrada.\",\n    raw\n  }\n};\n"
+      },
+      "id": "ebc5cc7a-4d2f-424b-8739-437833d4ea63",
+      "name": "Processamento de Dados 3 (JavaScript)",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        976,
+        96
+      ],
+      "typeVersion": 2,
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó de processamento de dados via Python."
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "id": "3ec34044-f5ab-435f-af7f-2f47b07430b5",
+      "name": "LLM Groq",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "position": [
+        -64,
+        304
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "groqApi": {
+          "id": "321U07bwvy0fPkiJ",
+          "name": "Groq account"
+        }
+      },
+      "notes": "www.datascienceacademy.com.br\n\nDSA Log - Nó do LLM usado no Agente de IA."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execução Agendada": {
+      "main": [
+        [
+          {
+            "node": "Download da Fonte de Dados na AWS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extração de Dados": {
+      "main": [
+        [
+          {
+            "node": "Filtro de Dados (Python)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de Dados (Python)": {
+      "main": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de IA": {
+      "main": [
+        [
+          {
+            "node": "Sumarização e Limpeza dos Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sumarização e Limpeza dos Dados": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados 1": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados 2": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados 3 (JavaScript)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatação dos Dados": {
+      "main": [
+        [
+          {
+            "node": "Upload do Resultado Para o Destino na AWS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download da Fonte de Dados na AWS": {
+      "main": [
+        [
+          {
+            "node": "Extração de Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload do Resultado Para o Destino na AWS": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados 3 (JavaScript)": {
+      "main": [
+        [
+          {
+            "node": "Formatação dos Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Groq": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c5d63b83-9ea6-424e-816e-bb87a4ca4d95",
+  "meta": {
+    "instanceId": "9c64779e7aa4618f35cd134c1d52c78d362e53f56580c29a2fc2d99376524584"
+  },
+  "id": "KY6llzDL4azSEcWC",
+  "tags": []
+}

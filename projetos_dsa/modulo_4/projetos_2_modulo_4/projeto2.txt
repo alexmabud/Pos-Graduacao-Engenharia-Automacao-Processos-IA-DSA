@@ -1,0 +1,95 @@
+# Projeto 2 - Fluxo de Automação com IA Para Limpeza e Processamento de Dados
+# Instruções e Configurações Usadas no Projeto
+
+
+# Nó: Filtro de Dados (Python)
+
+data = _input.first().json.text
+return {"data": data}
+
+
+# Nó: Agente de IA
+
+Resuma os dados em 4-5 linhas ou menos: {{ $json.data }}
+
+
+# Nó: Sumarização e Limpeza dos Dados
+
+{{ '{ "summary": "' + $json.output + '" }' }}
+
+
+# Nó: Processamento de Dados 1
+
+https://qwen-qwen-tts-demo.hf.space/gradio_api/call/predict
+
+{
+  "data": [
+    "{{ $json.summary }}",
+    "Dylan"
+  ]
+} 
+
+
+# Nó: Processamento de Dados 2
+
+https://qwen-qwen-tts-demo.hf.space/gradio_api/call/predict/{{ $json.event_id }}
+
+
+# Nó: Processamento de Dados 3 (JavaScript)
+
+const raw = $json.data || $json || "";
+
+// Caso 1: Se já foi analisado JSON com data[0].url
+if (Array.isArray($json.data)) {
+  return {
+    json: {
+      audioUrl: $json.data[0]?.url || null,
+      rawJson: $json.data
+    }
+  };
+}
+
+// Caso 2: Manipular texto SSE bruto
+const match = typeof raw === "string" ? raw.match(/data:\s*(\[[^\]]+\])/s) : null;
+
+if (match) {
+  try {
+    const parsed = JSON.parse(match[1]);
+    return {
+      json: {
+        audioUrl: parsed?.[0]?.url || null,
+        rawJson: parsed
+      }
+    };
+  } catch (e) {
+    return {
+      json: {
+        error: "DSA - Falha ao analisar SSE JSON",
+        raw
+      }
+    };
+  }
+}
+
+// Caso 3: Se nenhum dos dois funcionou
+return {
+  json: {
+    error: "DSA - URL do áudio não encontrada.",
+    raw
+  }
+};
+
+
+# Nó: Formatação dos Dados
+
+audioUrl
+{{ $json.audioUrl }}
+
+summary
+{{ $('Sumarização e Limpeza dos Dados').item.json.summary }}
+
+
+# Nó: Upload do Resultado Para o Destino na AWS
+
+saida/{{ $json.audioUrl }}
+
