@@ -4,7 +4,7 @@
 
 # dsa_url_arquivo
 
-https://axznttwbpxhgcsqjgakg.supabase.co/storage/v1/object/public/dsaprojeto1/curriculo_exemplo.pdf
+https://exemplo.pdf
 
 
 # dsa_job_description
