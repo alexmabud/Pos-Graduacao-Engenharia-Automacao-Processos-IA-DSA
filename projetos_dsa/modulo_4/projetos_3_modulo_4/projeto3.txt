@@ -1,0 +1,111 @@
+# Projeto 3 - Fluxo de Automação com IA Para Sistema de Recomendação
+# Instruções e Configurações Usadas no Projeto
+
+
+# Nó: Formulário de Usuário
+
+Formulário de Entrada
+
+Este workflow vai usar IA para buscar e resumir os melhores recursos do HackerNews e então enviar recomendações por e-mail para você.
+
+O que você está buscando?
+
+DevOps, AI, GPU
+
+Qual o seu e-mail?
+
+teste@dsacademy.com.br
+
+dsap3
+
+Em breve enviaremos um e-mail com todos os resultados.
+
+# Nó: Mecanismo de Busca Por Palavra Chave
+
+{{ $json["O que você está buscando?"] }}
+
+# Nó: Processamento de Dados da Busca
+
+children
+
+# Nó: Busca Por Palavra Chave via API
+
+https://hacker-news.firebaseio.com/v0/item/{{ $json.children }}.json?print=pretty
+
+# Nó: Combinando os Resultados da Busca
+
+text
+
+# Nó: LLM Chain
+
+Sua tarefa é encontrar os melhores recursos sobre {{ $('Formulário de Usuário').item.json["O que você está buscando?"] }}. 
+
+Eu extraí dados do HackerNews e a seguir está a lista de comentários do HackerNews sobre o tópico {{ $('Formulário de Usuário').item.json["O que você está buscando?"] }}
+
+Concentre-se apenas em comentários que forneçam quaisquer recursos, conselhos ou insights sobre {{ $('Formulário de Usuário').item.json["O que você está buscando?"] }}. Ignore todos os outros comentários que sejam discussões fora do tópico.
+
+Agora, com base nesses comentários, você precisa encontrar os principais recursos e listá-los.
+
+Categorize-os com base no tipo de recurso (curso, livro, artigo, vídeos do YouTube, palestras, etc.) e também descubra o nível de dificuldade (iniciante, intermediário, avançado, especialista).
+
+Nem sempre é necessário preencher essas categorias com exatidão; elas são fornecidas aqui para referência. Use sua intuição para encontrar a melhor categorização.
+
+Com base nessas métricas e executando uma análise básica de sentimentos nos comentários, você precisa descobrir quais são os principais recursos.
+
+Responda em texto formatado em Markdown. No seguinte formato:
+
+**OUTPUT FORMAT**
+
+```
+
+## Principais Recursos Recomendados Pela HN Para <topic Name> 
+
+### Categoria 1
+
+- **Recurso 1** - Descrição de uma linha
+- **Recurso 2** - Descrição de uma linha
+- ... 
+
+<adicione hiperlinks se houver algum>
+
+### Categoria 2
+
+- **Recurso 1** - Descrição de uma linha
+- **Recurso 2** - Descrição de uma linha
+- ... 
+
+<adicione hiperlinks em formato markdown ao próprio nome do recurso, se houver. Exemplo[resource name](https://example.com)>
+
+...
+```
+
+Aqui está a lista de comentários do HackerNews.
+
+{{ $json.text }}
+
+
+# Nó: Convertendo o Resultado Para o Formato HTML
+
+{{ $json.text }}
+
+# Nó: Envio de E-mail
+
+To E-mail:
+
+{{ $('Formulário de Usuário').item.json["Qual o seu e-mail?"] }}
+
+Subject:
+
+Principais Recomendações do HN Para {{ $('Formulário de Usuário').item.json["O que você está buscando?"] }}
+
+HTML:
+
+O Workflow n8n do Projeto 3 da DSA Usou {{ $('Processamento de Dados da Busca').all().length }} Comentários do HN na Busca.
+
+{{ $json.data }}
+
+
+
+
+
+

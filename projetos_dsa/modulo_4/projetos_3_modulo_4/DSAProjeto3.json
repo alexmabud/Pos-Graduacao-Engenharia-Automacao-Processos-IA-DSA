@@ -1,0 +1,332 @@
+{
+  "name": "DSAProjeto3",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Formulário de Entrada",
+        "formDescription": "Este workflow vai usar IA para buscar e resumir os melhores recursos do HackerNews e então enviar recomendações por e-mail para você.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "O que você está buscando?",
+              "placeholder": "DevOps, AI, GPU",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Qual o seu e-mail?",
+              "placeholder": "teste@dsacademy.com.br",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "Submit",
+          "path": "dsap3",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Em breve enviaremos um e-mail com todos os resultados."
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -624,
+        272
+      ],
+      "id": "5befcf29-2ccb-4e46-af93-acb9418d81a3",
+      "name": "Formulário de Usuário",
+      "webhookId": "d7293364-8d14-46a8-8be6-42e41f2d795c",
+      "notesInFlow": false,
+      "notes": "DSA Log - Este nó cria um formulário para capturar entradas do usuário, que servirão como fonte para execução do workflow."
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "limit": 5,
+        "additionalFields": {
+          "keyword": "={{ $json[\"O que você está buscando?\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.hackerNews",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        272
+      ],
+      "id": "b645e7d6-2b4e-433a-9e7f-22924ec81685",
+      "name": "Mecanismo de Busca Por Palavra Chave",
+      "notes": "DSA Log - Este nó aciona o mecanismo de busca do HackerNews."
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "children",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        272
+      ],
+      "id": "35789830-c868-43e2-9ce3-79947b222c6b",
+      "name": "Processamento de Dados da Busca",
+      "notes": "DSA Log - Este nó divide as saídas do nó anterior em partes menores."
+    },
+    {
+      "parameters": {
+        "url": "=https://hacker-news.firebaseio.com/v0/item/{{ $json.children }}.json?print=pretty",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        48,
+        272
+      ],
+      "id": "d551d5c8-dcea-4abf-88f4-b620a93ed124",
+      "name": "Busca Por Palavra Chave via API",
+      "notes": "DSA Log - Este nó realiza a busca via API no site do HackerNews."
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        272,
+        272
+      ],
+      "id": "3fa857d2-f90d-4f4f-96f9-33d0d568d23c",
+      "name": "Combinando os Resultados da Busca",
+      "notes": "DSA Log - Este nó combina os resultados do nó anterior em um único bloco de texto que será enviado ao LLM."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sua tarefa é encontrar os melhores recursos sobre {{ $('Formulário de Usuário').item.json[\"O que você está buscando?\"] }}. \n\nEu extraí dados do HackerNews e a seguir está a lista de comentários do HackerNews sobre o tópico {{ $('Formulário de Usuário').item.json[\"O que você está buscando?\"] }}\n\nConcentre-se apenas em comentários que forneçam quaisquer recursos, conselhos ou insights sobre {{ $('Formulário de Usuário').item.json[\"O que você está buscando?\"] }}. Ignore todos os outros comentários que sejam discussões fora do tópico.\n\nAgora, com base nesses comentários, você precisa encontrar os principais recursos e listá-los.\n\nCategorize-os com base no tipo de recurso (curso, livro, artigo, vídeos do YouTube, palestras, etc.) e também descubra o nível de dificuldade (iniciante, intermediário, avançado, especialista).\n\nNem sempre é necessário preencher essas categorias com exatidão; elas são fornecidas aqui para referência. Use sua intuição para encontrar a melhor categorização.\n\nCom base nessas métricas e executando uma análise básica de sentimentos nos comentários, você precisa descobrir quais são os principais recursos.\n\nResponda em texto formatado em Markdown. No seguinte formato:\n\n**OUTPUT FORMAT**\n\n```\n\n## Principais Recursos Recomendados Pela HN Para <topic Name> \n\n### Categoria 1\n\n- **Recurso 1** - Descrição de uma linha\n- **Recurso 2** - Descrição de uma linha\n- ... \n\n<adicione hiperlinks se houver algum>\n\n### Categoria 2\n\n- **Recurso 1** - Descrição de uma linha\n- **Recurso 2** - Descrição de uma linha\n- ... \n\n<adicione hiperlinks em formato markdown ao próprio nome do recurso, se houver. Exemplo[resource name](https://example.com)>\n\n...\n```\n\nAqui está a lista de comentários do HackerNews.\n\n{{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        496,
+        272
+      ],
+      "id": "dd84c782-ecc6-43f7-a50d-880701859164",
+      "name": "LLM Chain",
+      "notes": "DSA Log - Este nó cria uma chain (cadeia) contendo o prompt e chamada ao LLM."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        568,
+        496
+      ],
+      "id": "811834e9-1e01-430d-adb2-4a62f9d85031",
+      "name": "LLM Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LjvvVeEo6lxAsQlx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "DSA Log - LLM do Google."
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        848,
+        272
+      ],
+      "id": "2389b8f3-74fa-4e71-b107-350e4ee3c8f0",
+      "name": "Convertendo o Resultado Para o Formato HTML",
+      "notes": "DSA Log - Este nó converte a resposta do LLM em formato HTML."
+    },
+    {
+      "parameters": {
+        "fromEmail": "danielmwebdsa@gmail.com",
+        "toEmail": "={{ $('Formulário de Usuário').item.json[\"Qual o seu e-mail?\"] }}",
+        "subject": "=Principais Recomendações do HN Para {{ $('Formulário de Usuário').item.json[\"O que você está buscando?\"] }}",
+        "html": "=O Workflow n8n do Projeto 3 da DSA Usou {{ $('Processamento de Dados da Busca').all().length }} Comentários na Busca.\n\n{{ $json.data }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1072,
+        272
+      ],
+      "id": "90fc44f2-28cc-43df-acd0-07611e4605ca",
+      "name": "Envio de E-mail",
+      "webhookId": "a61e3ffb-5986-4875-93ae-9efbaff6bb3c",
+      "credentials": {
+        "smtp": {
+          "id": "C8uXrfFQ9zr9N4uv",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "DSA Log - Este nó envia por e-mail o resultado do workflow."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        272
+      ],
+      "id": "d2058d47-8064-40c9-8a06-69bfeb62ddfa",
+      "name": "Fim",
+      "notes": "DSA Log - Fim do workflow."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 3\n\n**Fluxo de Automação com IA Para Sistema de Recomendação**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "04b057c4-ab35-4b8b-a79e-8668c748c193",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Formulário de Usuário": {
+      "main": [
+        [
+          {
+            "node": "Mecanismo de Busca Por Palavra Chave",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mecanismo de Busca Por Palavra Chave": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados da Busca",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados da Busca": {
+      "main": [
+        [
+          {
+            "node": "Busca Por Palavra Chave via API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Por Palavra Chave via API": {
+      "main": [
+        [
+          {
+            "node": "Combinando os Resultados da Busca",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinando os Resultados da Busca": {
+      "main": [
+        [
+          {
+            "node": "LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Google Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Convertendo o Resultado Para o Formato HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertendo o Resultado Para o Formato HTML": {
+      "main": [
+        [
+          {
+            "node": "Envio de E-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio de E-mail": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9f005b08-13e3-4d43-b479-b28c200d3903",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "8CLyiT8hntkDLsu9",
+  "tags": []
+}
