@@ -1,0 +1,707 @@
+{
+  "name": "DSAProjeto4",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n \"assunto\": \"\",\n \"carta\": \"\"\n}"
+      },
+      "id": "3f8674b0-fc25-44f5-a2b4-7bc81cb1e689",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        752,
+        848
+      ],
+      "typeVersion": 1.2,
+      "notes": "DSA Log - Node que faz o parser (formatação) da saída do LLM para gerar o JSON resultante."
+    },
+    {
+      "parameters": {
+        "content": "## Variáveis\n\n### Defina os valores das variaveis:\n \n\n- Seu Nome\n- Nome da Sua Empresa\n- A atividade da sua empresa, usada para encontrar uma correspondência com seus leads\n- Seu e-mail, que receberá o resultado deste fluxo",
+        "height": 496
+      },
+      "id": "7462eb94-e50e-4ee9-b639-60848e1b9f77",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -776,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Crie uma planilha no Google Sheets com as seguintes colunas do seu Lead (potencial cliente):\n\n- twitter_username\n- linkedin_url\n- nome_lead\n- email_lead\n- done\n\nColoque os dados desejados nos campos correspondentes, exceto em \"done\", que deve permanecer vazio.\n\nConfigure as credenciais conforme documentação do n8n.",
+        "height": 612,
+        "width": 372
+      },
+      "id": "6a562fd3-2b8a-40a1-8631-106ce9addd39",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1392,
+        272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chamada à API do Twitter (X)\n\nVocê precisa criar uma conta no [RapidAPI](https://rapidapi.com/restocked-gAGxip8a_/api/twitter-api47) e assinar a API do Twitter. Com uma conta gratuita, você poderá extrair 500 tweets por mês.\n\nApós a assinatura, você deverá escolher o Tipo de Autenticação Genérico. No node, configure Autenticação de Cabeçalho e, em seguida, inserir o nome do cabeçalho: \"x-rapidapi-key\" e o valor fornecido na interface do RapidAPI.",
+        "height": 496,
+        "width": 420
+      },
+      "id": "4959997c-009e-495f-b574-4f80de4db395",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -530,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chamada à API do LinkedIn\n\nVocê precisa criar uma conta no [RapidAPI](https://rapidapi.com/freshdata-freshdata-default/api/fresh-linkedin-profile-data) e assinar o Fresh LinkedIn Profile Data. Esta API NÃO é gratuita.\n\nApós a assinatura, você deverá escolher o Tipo de Autenticação Genérico. Configure o node com Autenticação de Cabeçalho e, em seguida, inserir o nome do cabeçalho: \"x-rapidapi-key\" e o valor fornecido na interface do RapidAPI.\n",
+        "height": 496,
+        "width": 328
+      },
+      "id": "44373de9-2b0f-443a-832a-442a37c3094a",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        76,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "3839b337-6c33-4907-ba75-8ef04cefc14c",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.done }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "dfb7e71f-f866-4372-99fe-0543001d78a9",
+      "name": "Bloco Condicional",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -960,
+        720
+      ],
+      "executeOnce": false,
+      "typeVersion": 2.2,
+      "alwaysOutputData": true,
+      "notes": "DSA Log - Este node verifica o valor da coluna \"done\" (já processado) na planilha do Google Sheets. Se o campo estiver vazio, o processamento será iniciado, caso contrário o fluxo é encerrado. Ao final do fluxo a coluna \"done\" é atualizada indicando que o processamento foi realizado."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a8063b6-1fd8-429a-9f13-b7512066c702",
+              "name": "nome_empresa",
+              "type": "string",
+              "value": "Minha Empresa"
+            },
+            {
+              "id": "3e6780d6-86d0-4353-aa17-8470a91f63a8",
+              "name": "atividade_empresa",
+              "type": "string",
+              "value": "Seja automatizando tarefas recorrentes, analisando dados mais rapidamente ou personalizando interações com clientes, criamos sistemas personalizados para ajudar sua força de trabalho de forma mais inteligente."
+            },
+            {
+              "id": "1b42f1b3-20ed-4278-952d-f28fe0f03fa3",
+              "name": "seu_email",
+              "type": "string",
+              "value": "teste@minhaempresa.com"
+            },
+            {
+              "id": "7c109ba2-d855-49d5-8700-624b01a05bc1",
+              "name": "seu_nome",
+              "type": "string",
+              "value": "Aluno DSA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3827dcd5-30de-4dbe-be3a-be2e0b71dccb",
+      "name": "Definindo Variáveis",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -704,
+        624
+      ],
+      "typeVersion": 3.4,
+      "notes": "DSA Log - Variáveis sobre você e a sua empresa."
+    },
+    {
+      "parameters": {
+        "url": "https://twitter-api47.p.rapidapi.com/v2/user/by-username",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $('Trigger com Google Sheets').item.json.twitter_username}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "twitter-api47.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "615ae8e4-5fb8-48a2-89c0-73c8e48749f4",
+      "name": "Obter Twitter (X) ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -480,
+        624
+      ],
+      "typeVersion": 4.2,
+      "notes": "DSA Log - Node para obter o id no Twitter (X) a partir do username que está na planilha do Google Sheets."
+    },
+    {
+      "parameters": {
+        "url": "https://twitter-api47.p.rapidapi.com/v2/user/tweets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "userId",
+              "value": "={{ $json.rest_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "twitter-api47.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d82a72c-8da1-485a-980c-28da13379088",
+      "name": "Obter Tweets",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -256,
+        624
+      ],
+      "typeVersion": 4.2,
+      "notes": "DSA Log - Node para obter os tweets a partir do id do usuário."
+    },
+    {
+      "parameters": {
+        "url": "https://fresh-linkedin-profile-data.p.rapidapi.com/get-profile-posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "linkedin_url",
+              "value": "={{ $('Trigger com Google Sheets').item.json.linkedin_url }}"
+            },
+            {
+              "name": "type",
+              "value": "posts"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "fresh-linkedin-profile-data.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5c02a0c3-4b5c-4c08-a83d-de5d7d99de58",
+      "name": "Obter Posts LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        192,
+        624
+      ],
+      "typeVersion": 4.2,
+      "notes": "DSA Log - Node para coletar posts do LinkedIn a partir da url fornecida na planilha do Google Sheets."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## Eu\n\n- O nome da minha empresa é: {{ $('Definindo Variáveis').item.json.nome_empresa }}\n- A atividade da minha empresa é: {{ $('Definindo Variáveis').item.json.atividade_empresa }}\n- Meu nome é: {{ $('Definindo Variáveis').item.json.seu_email }}\n- Meu e-mail é: {{ $('Definindo Variáveis').item.json.seu_nome }}\n\n## Meu lead:\n\nNome: {{ $('Trigger com Google Sheets').item.json.nome_lead }}\n\n## O que eu quero que você faça\n\n- De acordo com as informações sobre mim e as postagens do LinkedIn e do Twitter de um usuário fornecido abaixo, quero que você encontre uma atividade comum que eu possa propor a essa pessoa e gere uma carta de apresentação sobre isso com uma possível parceria de vendas.\n- Retorne SOMENTE a carta de apresentação e o assunto como um json como este:\n{\n \"assunto\": \"\",\n \"carta\": \"\"\n}\n\nA carta de apresentação deve estar em formato HTML\n\n## Posts do Twitter:\n{{ JSON.stringify($('Processamento de Dados 1').item.json['Twitter tweets']) }}\n\n## Posts do Linkedin:\n{{ JSON.stringify($('Processamento de Dados 2').item.json['linkedIn posts']) }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é um assistente de marketing especializado em mídias sociais"
+            }
+          ]
+        }
+      },
+      "id": "582f9c40-cc79-4ad3-a020-ee6f2ae2fdcb",
+      "name": "Gerar Texto",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        640,
+        624
+      ],
+      "typeVersion": 1.5,
+      "notes": "DSA Log - Node com o prompt para acionar o LLM e gerar o texto de saida com a carta para o lead."
+    },
+    {
+      "parameters": {
+        "model": "gpt-5",
+        "options": {}
+      },
+      "id": "92b4294f-f915-4da7-a480-8512c6d26795",
+      "name": "LLM",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        592,
+        848
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Node que aponta para o LLM."
+    },
+    {
+      "parameters": {
+        "fromEmail": "meu_email_corporativo@teste.com",
+        "toEmail": "={{ $('Trigger com Google Sheets').item.json.email_lead }}, {{ $('Definindo Variáveis').item.json.seu_email }}",
+        "subject": "={{ $json.output.assunto }}",
+        "html": "={{ $json.output.carta }}",
+        "options": {}
+      },
+      "id": "4b090fa6-89e1-4862-b2d1-f4c98930622c",
+      "name": "Enviar E-mail",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [
+        992,
+        624
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "587e14ad-9bda-403d-9ea5-1f1fa00e65d3",
+      "credentials": {
+        "smtp": {
+          "id": "C8uXrfFQ9zr9N4uv",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "DSA Log - Este node envia para você (o analista) um e-mail com a carta a ser enviada ao cliente. Você pode enviar a carta diretamente ao cliente (conforme deixamos na configuração) se você confiar plenamente na resposta da IA. :-)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        624
+      ],
+      "id": "e205065f-082c-4566-b086-ef668c71cb1e",
+      "name": "Fim",
+      "notes": "DSA Log - Fluxo chegou ao fim do processamento."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 4\n\n**Fluxo de Automação com IA Para Análise de Mídias Sociais**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "e3134fe7-057b-46aa-94d2-73d7b8181b3d",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        816
+      ],
+      "id": "936232e2-fa24-4ac2-a3cd-c4470c8e68b4",
+      "name": "Encerra o Fluxo",
+      "notes": "DSA Log - Encerra o fluxo se o registro já tiver sido processado."
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        720
+      ],
+      "id": "9162c751-56dd-4662-b469-b0ca8072af4e",
+      "name": "Trigger com Google Sheets",
+      "notes": "DSA Log - Este trigger ficará monitorando a planilha do Google Sheets a cada 1 minuto verificando se uma nova linha foi adicionada ou atualizada. A decisão sobre o processamento ficará no node condicional que vai verificar a coluna \"done\" para decidir se inicia o processamento ou encerra o fluxo."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop sobre os resultados do node anterior para gerar o output com os tweets no formato JSON\noutput = []\nmax_posts = 10\nlet counter = 0\nfor (const item of $input.all()[0].json.tweets) {\n if(!item.content.hasOwnProperty('itemContent')) continue\n let post = {\n text: item.content.itemContent?.tweet_results?.result.legacy?.full_text\n }\n console.log(post)\n output.push(post)\n if(counter++ >= max_posts) break;\n}\n\nreturn {\"Twitter tweets\": output};"
+      },
+      "id": "2f0748f5-5a02-42c0-8820-3666b6d4f9cd",
+      "name": "Processamento de Dados 1",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -64,
+        624
+      ],
+      "typeVersion": 2,
+      "notes": "DSA Log - Node com código JavaScript para processar o resultado da extração dos tweets e ajustar os dados para o formato JSON."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop sobre os resultados do node anterior para gerar o output com os posts do LinkedIn no formato JSON\noutput = []\nmax_posts = 10\nlet counter = 0\nfor (const item of $input.all()[0].json.data) {\n let post = {\n title: item.article_title,\n text: item.text\n }\n output.push(post)\n if(counter++ >= max_posts) break;\n}\n\nreturn {\"linkedIn posts\": output};"
+      },
+      "id": "32a420ca-f95d-46c0-8a09-e7cb6e58a862",
+      "name": "Processamento de Dados 2",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        464,
+        624
+      ],
+      "typeVersion": 2,
+      "notes": "DSA Log - Node com código JavaScript para processar o resultado da extração dos posts do LinkedIn e ajustar os dados para o formato JSON."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1IcvbbG_WScVNyutXhzqyE9NxdxNbY90Dd63R8Y1UrAw",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IcvbbG_WScVNyutXhzqyE9NxdxNbY90Dd63R8Y1UrAw/edit?usp=drivesdk",
+          "cachedResultName": "Analyze social media of a lead"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IcvbbG_WScVNyutXhzqyE9NxdxNbY90Dd63R8Y1UrAw/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "done": "X",
+            "linkedin_url": "={{ $('Trigger com Google Sheets').item.json.linkedin_url }}"
+          },
+          "matchingColumns": [
+            "linkedin_url"
+          ],
+          "schema": [
+            {
+              "id": "linkedin_url",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "linkedin_url",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "name",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "twitter_handler",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "twitter_handler",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "email",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "done",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "done",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "readOnly": true,
+              "required": false,
+              "displayName": "row_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "eb2948b9-9c84-4682-81ce-dd628a03bb3b",
+      "name": "Atualizar Planilha no Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1216,
+        624
+      ],
+      "typeVersion": 4.5,
+      "notes": "DSA Log - Este node vai atualizar o campo \"done\" da planilha no Google Sheets indicando que o registro foi processado. O match será feito pela coluna com a url do LinkedIn."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Gerar Texto",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bloco Condicional": {
+      "main": [
+        [
+          {
+            "node": "Definindo Variáveis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Encerra o Fluxo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Definindo Variáveis": {
+      "main": [
+        [
+          {
+            "node": "Obter Twitter (X) ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter Twitter (X) ID": {
+      "main": [
+        [
+          {
+            "node": "Obter Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter Tweets": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter Posts LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Processamento de Dados 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Texto": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gerar Texto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar E-mail": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Planilha no Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger com Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Bloco Condicional",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados 1": {
+      "main": [
+        [
+          {
+            "node": "Obter Posts LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processamento de Dados 2": {
+      "main": [
+        [
+          {
+            "node": "Gerar Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Planilha no Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ca760df-a101-4ed6-89b5-bba162268f2e",
+  "meta": {
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "3DVZ5O61gzMBvczo",
+  "tags": []
+}
