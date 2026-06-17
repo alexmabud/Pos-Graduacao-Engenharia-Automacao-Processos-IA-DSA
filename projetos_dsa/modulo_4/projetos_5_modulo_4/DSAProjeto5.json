@@ -1,0 +1,641 @@
+{
+  "name": "DSAProjeto5",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "id": "8748373c-1aba-4f77-9dc5-057f8f1dc41f",
+      "name": "Trigger via Agendamento",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -672,
+        448
+      ],
+      "typeVersion": 1.2,
+      "notes": "DSA Log - Trigger para execução agendada do fluxo."
+    },
+    {
+      "parameters": {},
+      "id": "e33f19ca-a285-4723-b63f-5d83cf7a6f0b",
+      "name": "Trigger Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -672,
+        256
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Trigger manual do fluxo."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Esta é a empresa sobre a qual quero que você pesquise informações:\n{{ $json.nome_empresa }}\n\nRetorne:\n\n- O domínio da empresa\n- A URL do LinkedIn da empresa\n- Mercado: se é B2B ou B2C. Responda apenas com \"B2B\" ou \"B2C\"\n- O plano com o menor valor pago que a empresa oferece. Se não tiver certeza, responda com null\n- Informe se a empresa possui um plano empresarial\n- Informe se a empresa oferece um teste gratuito mencionado na página inicial. Responda com false se não encontrar evidências sólidas.\n- Retorne um array com até 5 ferramentas com as quais a empresa está integrada\n",
+        "hasOutputParser": true,
+        "options": {
+          "maxIterations": 10
+        }
+      },
+      "id": "fd83f6c4-4901-4f9f-9044-c66bbfd1100f",
+      "name": "Agente de IA",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        352,
+        480
+      ],
+      "typeVersion": 1.6,
+      "notes": "DSA Log - Node com o prompt para o Agente de IA. Marcamos a opção para requerer formato específico na resposta."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        320,
+        784
+      ],
+      "id": "a5e0930e-4494-4ec2-86d7-e830a503cb5c",
+      "name": "SerpAPI Para Busca na Internet",
+      "credentials": {
+        "serpApi": {
+          "id": "HY2jYFIa0yrDswbE",
+          "name": "SerpAPI account"
+        }
+      },
+      "notes": "DSA Log - Node para fazer busca no Google. Crie sua API gratuita aqui: https://serpapi.com"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fcc97354-b9f6-4459-a004-46e87902c77c",
+              "name": "nome_da_empresa",
+              "type": "string",
+              "value": "={{ $json.nome_empresa }}"
+            },
+            {
+              "id": "e5415c49-5204-45b1-a0e9-814157127b12",
+              "name": "row_number",
+              "type": "number",
+              "value": "={{ $json.row_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "95c43471-b78b-4b5e-bbe1-4f3a3b532350",
+      "name": "Dados de Entrada",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -224,
+        352
+      ],
+      "typeVersion": 3.3,
+      "notes": "DSA Log - Node para leitura dos dados da planilha."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4109ca11-1bb8-4f5c-8bec-a962f44b0746",
+              "name": "dominio",
+              "type": "string",
+              "value": "={{ $json.output.dominio }}"
+            },
+            {
+              "id": "7f492768-375e-48fa-866b-644b2b5cbd68",
+              "name": "url_linkedin",
+              "type": "string",
+              "value": "={{ $json.output.url_linkedin }}"
+            },
+            {
+              "id": "e30b0d07-68db-45a1-9593-fd6ce24a1d50",
+              "name": "mercado",
+              "type": "string",
+              "value": "={{ $json.output.mercado }}"
+            },
+            {
+              "id": "0c03a51e-2c07-4583-85c6-d3d2ee81c5d1",
+              "name": "plano_mais_barato",
+              "type": "number",
+              "value": "={{ $json.output.plano_mais_barato }}"
+            },
+            {
+              "id": "0c9622d0-8446-4663-9a94-964b5df851f1",
+              "name": "tem_plano_empresarial",
+              "type": "boolean",
+              "value": "={{ $json.output.tem_plano_empresarial }}"
+            },
+            {
+              "id": "7fd39897-65c3-45d6-9563-8254f55ecef0",
+              "name": "tem_free_trial",
+              "type": "boolean",
+              "value": "={{ $json.output.tem_free_trial }}"
+            },
+            {
+              "id": "26477939-d407-4cae-92b2-9a9dc0f53a64",
+              "name": "integrations",
+              "type": "array",
+              "value": "={{ $json.output.integrations }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5c875caa-9f45-49d8-b614-2d1cb78242d4",
+      "name": "Dados de Saída",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        816,
+        480
+      ],
+      "typeVersion": 3.3,
+      "notes": "DSA Log - Definimos os dados de saída que usaremos."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        352
+      ],
+      "id": "168c689c-5f8f-4eb5-9ee2-9eeacbb9b04f",
+      "name": "Fim",
+      "notes": "DSA Log - Fim do processamento."
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "nome_empresa",
+              "field2": "nome_empresa"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3733f8d7-2952-49be-bca8-2ad502300d4d",
+      "name": "Merge de Dados",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1040,
+        352
+      ],
+      "typeVersion": 2.1,
+      "notes": "DSA Log - Merge dos dados originais da planilha com os resultados do Agente de IA."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 5\n\n**Fluxo de Automação com Agente de IA Para Assistente de Vendas Corporativas**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "310426dc-695d-4628-9501-62b12e50d1f4",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "849215da-8178-43e2-ba9e-bc51906e457d",
+      "name": "Loop Pelas Linhas da Planilha",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        0,
+        352
+      ],
+      "typeVersion": 3,
+      "notes": "DSA Log - Loop pelas linhas da planilha."
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n \t\t\"dominio\": {\n\t\t\t\"type\": [\"string\", \"null\"]\n\t\t},\n \t\t\"url_linkedin\": {\n\t\t\t\"type\": [\"string\", \"null\"]\n\t\t},\n \t\t\"mercado\": {\n\t\t\t\"type\": [\"string\", \"null\"]\n\t\t},\n\t\t\"plano_mais_barato\": {\n\t\t\t\"type\": [\"number\", \"null\"]\n\t\t},\n\t\t\"tem_plano_empresarial\": {\n\t\t\t\"type\": [\"boolean\", \"null\"]\n\t\t},\n\t\t\"tem_free_trial\": {\n\t\t\t\"type\": [\"boolean\", \"null\"]\n\t\t},\n\t\t\"integrations\": {\n\t\t\t\"type\": [\"array\",\"null\"]\n\t\t}\n\t}\n}\n"
+      },
+      "id": "60edfe04-4de9-40d4-93a3-046b92bfa5fa",
+      "name": "Parser Estruturado do Output",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        672,
+        720
+      ],
+      "typeVersion": 1.2,
+      "notes": "DSA Log - Node para fazer o parser (formatação) da saída do Agente de IA."
+    },
+    {
+      "parameters": {
+        "content": "Este fluxo de trabalho permite que você faça pesquisas de clientes na web usando IA.\n\nO módulo avançado de Agente de IA possui 2 recursos:\n\n- Pesquisar no Google usando SerpAPI\n- Visitar e obter conteúdo de web sites\n\nA partir de uma entrada não estruturada, como um domínio ou nome de empresa, ele retornará as seguintes propriedades:\n\n- Domínio\n- URL da empresa no Linkedin\n- Possui teste gratuito\n- Plano mais barato\n- Possui plano empresarial\n- Mercado (B2B ou B2C)\n- Possui API de integração\n\nVocê pode adaptar este fluxo de trabalho para pesquisar qualquer informação que precisar. Você só precisa especificar isso no prompt e definir o formato de saída no node \"Parser Estruturado do Output\".",
+        "height": 416,
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -912,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "5ff302ef-8310-4eb0-9141-ec705fed8689",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "url_planilha",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19U7gAgkUEz6mbFcnygf1zKDdGvY6OAdUqq3bZQWgjxE/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "integrations": "={{ $json.integrations }}",
+            "enrichment_status": "done",
+            "dominio": "{{ $json.dominio }}",
+            "url_linkedin": "{{ $json.url_linkedin }}",
+            "tem_free_trial": "{{ $json.tem_free_trial }}",
+            "plano_mais_barato": "{{ $json.plano_mais_barato }}",
+            "tem_plano_empresarial": "{{ $json.tem_plano_empresarial }}",
+            "mercado": "{{ $json.mercado }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "input",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "required": false,
+              "displayName": "input",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dominio",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "dominio",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url_linkedin",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "url_linkedin",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tem_free_trial",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "tem_free_trial",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "plano_mais_barato",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "plano_mais_barato",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tem_plano_empresarial",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "tem_plano_empresarial",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mercado",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "mercado",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "integrations",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "integrations",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "enrichment_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "enrichment_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "readOnly": true,
+              "required": false,
+              "displayName": "row_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "2e36fcad-3824-4faa-b8ab-7e6b00b57949",
+      "name": "Atualiza Planilha",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1264,
+        352
+      ],
+      "typeVersion": 4.3,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "76uGiNlIWJyQGkQv",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "DSA Log - Node para atualizar planilha de dados."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "",
+          "cachedResultUrl": "",
+          "cachedResultName": ""
+        }
+      },
+      "id": "9fcc85f0-cef8-40f8-9c4e-af2afb0f69a1",
+      "name": "Leitura da Planilha",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -448,
+        352
+      ],
+      "typeVersion": 4.3,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "76uGiNlIWJyQGkQv",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "DSA Log - Node para carregar a planilha de dados. Crie uma planilha contendo as colunas abaixo:\n\nnome_empresa\t\ndominio\t\nurl_linkedin\t\ntem_free_trial\t\nplano_mais_barato\t\ntem_plano_empresarial\t\t\nmercado\t\nintegrations\t\nenrichment_status\n\nPreencha a coluna nome_empresa com o nome da empresa (ou URL do web site da empresa) e o fluxo preencherá os demais campos ao final do processamento."
+    },
+    {
+      "parameters": {
+        "description": "Esta ferramenta retornará o texto da URL fornecida.",
+        "source": "parameter",
+        "workflowJson": "{\n\t\"url\": \"{{ $json.query.url }}\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        704
+      ],
+      "id": "d3c8a183-f603-4144-b493-96e38b94290c",
+      "name": "Extração com Web Scraping",
+      "notes": "DSA Log - Node para extração do conteúdo da página web."
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "691b5723-bb66-410b-9a71-60b5ca0b0588",
+      "name": "LLM da OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        128,
+        736
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Node para o LLM usado no Agente de IA."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger Manual": {
+      "main": [
+        [
+          {
+            "node": "Leitura da Planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger via Agendamento": {
+      "main": [
+        [
+          {
+            "node": "Leitura da Planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI Para Busca na Internet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados de Entrada": {
+      "main": [
+        [
+          {
+            "node": "Loop Pelas Linhas da Planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de IA": {
+      "main": [
+        [
+          {
+            "node": "Dados de Saída",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados de Saída": {
+      "main": [
+        [
+          {
+            "node": "Merge de Dados",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge de Dados": {
+      "main": [
+        [
+          {
+            "node": "Atualiza Planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Pelas Linhas da Planilha": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Agente de IA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge de Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser Estruturado do Output": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza Planilha": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leitura da Planilha": {
+      "main": [
+        [
+          {
+            "node": "Dados de Entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extração com Web Scraping": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM da OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a4170d1c-df0f-4052-9d2d-b8d61a29b4cc",
+  "meta": {
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "NS2yx8kv6VFeRhqH",
+  "tags": []
+}

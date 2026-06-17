@@ -1,0 +1,140 @@
+# Projeto 5 - Fluxo de Automação com Agente de IA Para Assistente de Vendas Corporativas
+# Instruções e Configurações Usadas no Projeto
+
+
+# Nó: Leitura da Planilha
+
+DSA Log - Node para carregar a planilha de dados. Crie uma planilha contendo as colunas abaixo:
+
+nome_empresa	
+dominio	
+url_linkedin	
+tem_free_trial	
+plano_mais_barato	
+tem_plano_empresarial		
+mercado	
+integrations	
+enrichment_status
+
+Preencha a coluna nome_empresa com o nome da empresa (ou URL do web site da empresa) e o fluxo preencherá os demais campos ao final do processamento.
+
+
+# Nó: Dados de Entrada
+
+nome_da_empresa
+{{ $json.nome_empresa }}
+
+row_number
+{{ $json.row_number }}
+
+
+# Nó: Agente de IA
+
+Esta é a empresa sobre a qual quero que você pesquise informações:
+{{ $json.nome_empresa }}
+
+Retorne:
+
+- O domínio da empresa
+- A URL do LinkedIn da empresa
+- Mercado: se é B2B ou B2C. Responda apenas com "B2B" ou "B2C"
+- O plano com o menor valor pago que a empresa oferece. Se não tiver certeza, responda com null
+- Informe se a empresa possui um plano empresarial
+- Informe se a empresa oferece um teste gratuito mencionado na página inicial. Responda com false se não encontrar evidências sólidas.
+- Retorne um array com até 5 ferramentas com as quais a empresa está integrada
+
+
+# Nó: SerpAPI Para Busca na Internet
+
+DSA Log - Node para fazer busca no Google. Crie sua API gratuita aqui: https://serpapi.com
+
+
+# Nó: Extração com Web Scraping
+
+Esta ferramenta retornará o texto da URL fornecida.
+
+{
+	"url": "{{ $json.query.url }}"
+}
+
+
+# Nó: Parser Estruturado do Output
+
+{
+	"type": "object",
+	"properties": {
+ 		"dominio": {
+			"type": ["string", "null"]
+		},
+ 		"url_linkedin": {
+			"type": ["string", "null"]
+		},
+ 		"mercado": {
+			"type": ["string", "null"]
+		},
+		"plano_mais_barato": {
+			"type": ["number", "null"]
+		},
+		"tem_plano_empresarial": {
+			"type": ["boolean", "null"]
+		},
+		"tem_free_trial": {
+			"type": ["boolean", "null"]
+		},
+		"integrations": {
+			"type": ["array","null"]
+		}
+	}
+}
+
+
+# Nó: Dados de Saída
+
+dominio
+{{ $json.output.dominio }}
+
+url_linkedin
+{{ $json.output.url_linkedin }}
+
+mercado
+{{ $json.output.mercado }}
+
+plano_mais_barato
+{{ $json.output.plano_mais_barato }}
+
+tem_plano_empresarial
+{{ $json.output.tem_plano_empresarial }}
+
+tem_free_trial
+{{ $json.output.tem_free_trial }}
+
+integrations
+{{ $json.output.integrations }}
+
+
+# Nó: Merge de Dados
+
+nome_empresa
+
+
+# Nó: Atualiza Planilha
+
+{{ $json.row_number }}
+
+{{ $json.dominio }}
+
+{{ $json.url_linkedin }}
+
+{{ $json.tem_free_trial }}
+
+{{ $json.plano_mais_barato }}
+
+{{ $json.tem_plano_empresarial }}
+
+{{ $json.mercado }}
+
+{{ $json.integrations }}
+
+done
+
+
