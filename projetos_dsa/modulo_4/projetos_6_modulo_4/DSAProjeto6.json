@@ -1,0 +1,447 @@
+{
+  "name": "DSAProjeto6",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "35e874df-2904-494e-a9f5-5a3f20f517f8",
+        "options": {}
+      },
+      "id": "a7d2418d-9820-4c9d-a298-84ffc5f2f830",
+      "name": "Recebe o Arquivo da RFP",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -624,
+        320
+      ],
+      "webhookId": "35e874df-2904-494e-a9f5-5a3f20f517f8",
+      "typeVersion": 2,
+      "notes": "DSA Log - Passe como entrada o documento chamado QuestionarioClienteRFP.pdf."
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n \"doc_title\": \"{{ $('Recebe o Arquivo da RFP').item.json.body.title }}\",\n \"doc_filename\": \"{{ $('Recebe o Arquivo da RFP').item.json.body.id }} | {{ $('Recebe o Arquivo da RFP').item.json.body.title }} | {{ $now.format('yyyyMMddhhmmss') }}| Resposta RFP\"\"\n}",
+        "options": {}
+      },
+      "id": "8179b360-4f7e-42c5-b6cd-291ee28a25df",
+      "name": "Define Formato dos Dados",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -176,
+        320
+      ],
+      "typeVersion": 3.3,
+      "notes": "DSA Log - Aqui capturamos a saída do node anterior (texto extraído do documento pdf) e formatamos a saída para o próximo passo."
+    },
+    {
+      "parameters": {
+        "folderId": "=1y0I8MH32maIWCJh767mRE_NMHC6A3bUu",
+        "title": "={{ $json.doc_filename }}"
+      },
+      "id": "d5bbc5fa-7e8f-49ee-a512-ce4bdc30366c",
+      "name": "Cria o Documento RFP Para Resposta",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        48,
+        320
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "p49iv91FiKVVcOlh",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "DSA Log - Aqui criamos um documento de saída com as respostas"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=Título: {{ $('Define Formato dos Dados').item.json.doc_title }}\nData Gerada: {{ $now.format(\"yyyy-MM-dd @ hh:mm\") }}\nId da Execução: http://localhost:5678/workflow/{{ $workflow.id }}/executions/{{ $execution.id }}\n\n---"
+            }
+          ]
+        }
+      },
+      "id": "7ebd79c6-2233-4f7f-b9c5-99309dde7426",
+      "name": "Adiciona Metadados ao Arquivo da RFP",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        272,
+        320
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "p49iv91FiKVVcOlh",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "DSA Log - Aqui adicionamos metadados ao documento de saída (resultado de execução do workflow com n8n)."
+    },
+    {
+      "parameters": {
+        "model": "gpt-5-mini",
+        "options": {}
+      },
+      "id": "abfbb068-d20a-485f-ae0d-9b03d4ed9bb2",
+      "name": "LLM OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        384,
+        576
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Aqui definimos o o LLM a ser usado para extrair as perguntas do documento pdf."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e8d6d28e-d3d3-4b4c-9277-a9d4c51fb699",
+      "name": "Output Parser Para Lista de Itens",
+      "type": "@n8n/n8n-nodes-langchain.outputParserItemList",
+      "position": [
+        632,
+        544
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Aqui definimos que o LLM deve gerar a saída de forma estruturada no formato de itens (sendo um item para cada pergunta extraída do documento pdf)."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você recebeu um documento de RFP como parte de um processo de licitação de um comprador. Por favor, extraia todas as perguntas destinadas ao fornecedor. Você deve garantir que as perguntas extraídas estejam exatamente como estão escritas no documento da RFP.\n\n<RFP>{{ $('Leitura de Arquivo PDF').item.json.text }}<RFP>",
+        "hasOutputParser": true
+      },
+      "id": "72b4441d-ec6c-4ca4-8de5-daa7299f140a",
+      "name": "Extrai Perguntas da RFP",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        496,
+        320
+      ],
+      "typeVersion": 1.4,
+      "notes": "DSA Log - Aqui configuramos o prompt com as instruções para o LLM."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bdaf08c0-2685-42c9-8871-7695bf99e87d",
+      "name": "Loop Por Cada Pergunta",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        848,
+        320
+      ],
+      "typeVersion": 3,
+      "notes": "DSA Log - Loop por cada item (cada pergunta) gerada como saída do LLM."
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "asst_QBI5lLKOsjktr3DRB4MwrgZd",
+          "cachedResultName": "DSABotAssistant"
+        },
+        "prompt": "define",
+        "text": "={{ $json.response.text }}",
+        "options": {}
+      },
+      "id": "128abd5f-f199-435f-b918-0373d1450c71",
+      "name": "Responde Cada Pergunta",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1072,
+        320
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Aqui acionamos o Assistente de IA criado na OpenAI com RAG (documento de contexto). Cada pergunta extraída do questionário será enviada ao Assistente de IA que irá gerar uma resposta com base no contexto."
+    },
+    {
+      "parameters": {
+        "sendTo": "=suporte@datascienceacademy.com.br",
+        "subject": "=Processamento da RFP \"{{ $('Define Formato dos Dados').item.json.title }}\" Concluído!",
+        "emailType": "text",
+        "message": "=O documento com as respostas da RFP \"{{ $('Define Formato dos Dados').item.json.title }}\" está concluído!",
+        "options": {}
+      },
+      "id": "a75559b6-edd6-4281-b74e-d00f02d08a16",
+      "name": "Envia Email de Notificação",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1136,
+        128
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "73c88ed7-eb1d-4d1e-92ea-f2720be06d93",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3PIaXL5zOsxIeG78",
+          "name": "Gmail account"
+        }
+      },
+      "notes": "DSA Log - Este node envia notificação por e-mail informando que o processamento foi concluído."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Cria o Documento RFP Para Resposta').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $runIndex+1 }}. {{ $json.content }}\n{{ $json.output }}\n\n"
+            }
+          ]
+        }
+      },
+      "id": "2d7d1b05-1cae-4fe8-a286-c59b3956fe92",
+      "name": "Grava as Resposta da RFP",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        1424,
+        392
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "p49iv91FiKVVcOlh",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "DSA Log - Grava as respostas do Assistente de IA no documento word criado na nuvem."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 6\n\n**Fluxo de Automação com Assistente de IA e RAG Para Análise de Propostas Comerciais e Envio de Notificação**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "397c971a-d0d1-4243-becd-820fd46f8b26",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "**Este workflow executa os passos abaixo:**\n\n* Recebe um documento com questionário de uma RFP via webhook\n* Cria um novo documento de resposta à RFP no Google Docs\n* Utiliza LLM para extrair as perguntas do questionário da RFP para uma lista de perguntas\n* Percorre cada pergunta e usa um Assistente da OpenAI para gerar uma resposta. Salva cada resposta no documento de resposta\n* Após a conclusão, envia uma notificação via Gmail\n",
+        "height": 244,
+        "width": 694
+      },
+      "id": "2d51b993-9f6c-4afa-a564-1862aacdf94b",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -944,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "a4b40de8-f533-4ff6-9f52-3d563dc77b4c",
+      "name": "Leitura de Arquivo PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        -400,
+        320
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Aqui extraímos os dados de texto do documento pdf."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        128
+      ],
+      "id": "f5816d3d-18f3-4a4c-9370-45ac7ae54c13",
+      "name": "Fim",
+      "notes": "DSA Log - Fim do processamento."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recebe o Arquivo da RFP": {
+      "main": [
+        [
+          {
+            "node": "Leitura de Arquivo PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define Formato dos Dados": {
+      "main": [
+        [
+          {
+            "node": "Cria o Documento RFP Para Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria o Documento RFP Para Resposta": {
+      "main": [
+        [
+          {
+            "node": "Adiciona Metadados ao Arquivo da RFP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona Metadados ao Arquivo da RFP": {
+      "main": [
+        [
+          {
+            "node": "Extrai Perguntas da RFP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extrai Perguntas da RFP",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser Para Lista de Itens": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Extrai Perguntas da RFP",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrai Perguntas da RFP": {
+      "main": [
+        [
+          {
+            "node": "Loop Por Cada Pergunta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Por Cada Pergunta": {
+      "main": [
+        [
+          {
+            "node": "Envia Email de Notificação",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responde Cada Pergunta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responde Cada Pergunta": {
+      "main": [
+        [
+          {
+            "node": "Grava as Resposta da RFP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Email de Notificação": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grava as Resposta da RFP": {
+      "main": [
+        [
+          {
+            "node": "Loop Por Cada Pergunta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leitura de Arquivo PDF": {
+      "main": [
+        [
+          {
+            "node": "Define Formato dos Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5a68c49b-0a42-46cd-8e1c-6d2d8454cfff",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "gxCgFAC9IGaDeNHK",
+  "tags": []
+}

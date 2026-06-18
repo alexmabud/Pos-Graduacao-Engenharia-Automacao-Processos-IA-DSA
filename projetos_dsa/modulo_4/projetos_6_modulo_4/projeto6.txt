@@ -1,0 +1,49 @@
+# Projeto 6 - Fluxo de Automação com Assistente de IA e RAG Para Análise de Propostas Comerciais e Envio de Notificação
+# Instruções e Configurações Usadas no Projeto
+
+
+# Nó: Define Formato dos Dados
+
+{
+ "doc_title": "{{ $('Recebe o Arquivo da RFP').item.json.body.title }}",
+ "doc_filename": "{{ $('Recebe o Arquivo da RFP').item.json.body.id }} | {{ $('Recebe o Arquivo da RFP').item.json.body.title }} | {{ $now.format('yyyyMMddhhmmss') }}| Resposta RFP""
+}
+
+
+# Nó: Adiciona Metadados ao Arquivo da RFP
+
+Título: {{ $('Define Formato dos Dados').item.json.doc_title }}
+Data Gerada: {{ $now.format("yyyy-MM-dd @ hh:mm") }}
+Id da Execução: http://localhost:5678/workflow/{{ $workflow.id }}/executions/{{ $execution.id }}
+
+---
+
+
+# Nó: Extrai Perguntas da RFP
+
+Você recebeu um documento de RFP como parte de um processo de licitação de um comprador. Por favor, extraia todas as perguntas destinadas ao fornecedor. Você deve garantir que as perguntas extraídas estejam exatamente como estão escritas no documento da RFP.
+
+<RFP>{{ $('Leitura de Arquivo PDF').item.json.text }}<RFP>
+
+
+# Nó: Grava as Resposta da RFP
+
+{{ $('Cria o Documento RFP Para Resposta').item.json.id }}
+
+{{ $runIndex+1 }}. {{ $json.content }}
+{{ $json.output }}
+
+
+# Nó: Envia Email de Notificação
+
+Processamento da RFP "{{ $('Define Formato dos Dados').item.json.title }}" Concluído!
+
+O documento com as respostas da RFP "{{ $('Define Formato dos Dados').item.json.title }}" está concluído!
+
+
+
+
+
+
+
+
