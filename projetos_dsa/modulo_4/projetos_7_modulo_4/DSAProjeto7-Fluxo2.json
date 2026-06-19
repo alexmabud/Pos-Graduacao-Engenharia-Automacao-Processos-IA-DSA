@@ -1,0 +1,241 @@
+{
+  "name": "DSAProjeto7-Fluxo2",
+  "nodes": [
+    {
+      "parameters": {
+        "topK": 3
+      },
+      "id": "b914114d-0f59-4fce-b5d5-12bd25bdbd9b",
+      "name": "Vector Store Retriever",
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "position": [
+        352,
+        560
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Este nó retorna até 5 registros do banco de dados vetorial."
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "tb_suportedsa",
+          "mode": "list",
+          "cachedResultName": "tb_suportedsa"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "74c4ac90-36a9-484a-b58b-d4dcfbbdea91",
+      "name": "Retrieve by Query",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        352,
+        768
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "A5QnT7uwTrL8wHnU",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "DSA Log - Este nó faz a busca vetorial no banco de dados do RAG."
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Olá! 👋\nSou o Assistente de Suporte. Como posso te ajudar hoje?",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "118292e6-6e94-49b0-a8f0-92bb6ab56fc9",
+      "name": "Quando Mensagem de Chat é Recebida",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        0,
+        336
+      ],
+      "webhookId": "30043037-6fd2-416d-90c8-37cc759c46d9",
+      "typeVersion": 1.1,
+      "notes": "DSA Log - Node para iniciar o chat."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9246b40d-3a13-4903-8d7f-95fb470550c4",
+      "name": "Chain de Perguntas e Respostas",
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "position": [
+        256,
+        336
+      ],
+      "typeVersion": 1.3,
+      "notes": "DSA Log - Cria a cadeia (chain) de pergunta e resposta com RAG."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "85d01ee8-4611-420f-bb94-94928a8477e8",
+      "name": "LLM OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        176,
+        560
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - LLM da OpenAI."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "440fc115-ccae-4e30-85a5-501d0617b2cf",
+              "name": "output",
+              "type": "string",
+              "value": "={{ $json.response.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ee09cf2c-9d5c-4835-b2dc-702eb41beb16",
+      "name": "Customiza a Resposta",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        720,
+        336
+      ],
+      "notesInFlow": true,
+      "typeVersion": 3.4,
+      "notes": "DSA Log - Gera a saída do chat."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ae79ec2b-9fbd-40ed-a1be-c36cc0b85aed",
+      "name": "Modelos de Embeddings OpenAI Para Retrieval",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        432,
+        976
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Modelo de embeddings para o retrieval."
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 7\n\n**Fluxo de Automação Para Construção de RAG com IA e Banco de Dados Supabase Para Atendimento de Suporte**\n\n**Fluxo 2**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "a2264d68-961a-492e-8c48-318086423f89",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Chain de Perguntas e Respostas",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve by Query": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quando Mensagem de Chat é Recebida": {
+      "main": [
+        [
+          {
+            "node": "Chain de Perguntas e Respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chain de Perguntas e Respostas": {
+      "main": [
+        [
+          {
+            "node": "Customiza a Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Chain de Perguntas e Respostas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelos de Embeddings OpenAI Para Retrieval": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Retrieve by Query",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "295fca90-3b75-4c7e-ab0a-681ad9e02f6b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "L72NdsCCZY0kA1z2",
+  "tags": []
+}

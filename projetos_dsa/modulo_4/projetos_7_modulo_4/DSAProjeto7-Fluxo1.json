@@ -1,0 +1,233 @@
+{
+  "name": "DSAProjeto7-Fluxo1",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 7\n\n**Fluxo de Automação Para Construção de RAG com IA e Banco de Dados Supabase Para Atendimento de Suporte**\n\n**Fluxo 1**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "29204559-48a4-4caa-b315-7eac8e276ed6",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "tb_suportedsa",
+          "mode": "list",
+          "cachedResultName": "tb_suportedsa"
+        },
+        "options": {}
+      },
+      "id": "774ff6f5-7325-46f8-be00-f86c13a3e618",
+      "name": "Insert de Documentos",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        640,
+        352
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "A5QnT7uwTrL8wHnU",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "DSA Log - Node para insert no banco de dados vetorial."
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "pdfLoader",
+        "options": {}
+      },
+      "id": "7e21c67e-438a-47ea-ba0b-93d1c85581f1",
+      "name": "Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        736,
+        576
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Data loader."
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "981d836d-8834-472f-99bb-f6c4fc863dcd",
+      "name": "Modelo de Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        608,
+        576
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Modelo de embeddings."
+    },
+    {
+      "parameters": {
+        "chunkSize": 800,
+        "chunkOverlap": 30,
+        "options": {}
+      },
+      "id": "e5c81860-2c5d-4196-9c0c-977c72341312",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        816,
+        784
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Divisor de texto."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        352
+      ],
+      "id": "ddc8262c-cd6a-434e-aee5-00623d80f44e",
+      "name": "DSA - Inicia ao Clicar em Execute Workflow",
+      "notesInFlow": false,
+      "notes": "DSA Log - Node de início do workflow."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1125794e-cfc3-4897-8d84-57b5830ee684",
+              "name": "dsa_url_arquivo",
+              "value": "https://zdwijyhexkppqmenvboo.supabase.co/storage/v1/object/sign/dsap7/Politicas_de_Suporte_de_TI.pdf",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        352
+      ],
+      "id": "07cdc227-8c1d-4984-a489-0c26f8ff2ad3",
+      "name": "DSA - Definindo Parametros",
+      "notes": "DSA Log - Definição de parâmetros para a análise com IA."
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.dsa_url_arquivo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        352
+      ],
+      "id": "53940ac7-7bc9-4521-9181-b084ffe402c7",
+      "name": "DSA - Download Manual Suporte",
+      "notes": "DSA Log - Download do manual em PDF para extração do texto."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert de Documentos",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo de Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert de Documentos",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Inicia ao Clicar em Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "DSA - Definindo Parametros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Definindo Parametros": {
+      "main": [
+        [
+          {
+            "node": "DSA - Download Manual Suporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DSA - Download Manual Suporte": {
+      "main": [
+        [
+          {
+            "node": "Insert de Documentos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0a584082-fac3-45b8-92a1-32ccee573779",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "WFREorrSqBorltua",
+  "tags": []
+}

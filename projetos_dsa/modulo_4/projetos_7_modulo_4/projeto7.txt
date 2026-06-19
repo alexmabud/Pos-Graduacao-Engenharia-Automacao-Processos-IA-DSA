@@ -1,0 +1,77 @@
+# Projeto 7 - Fluxo de Automação Para Construção de RAG com IA e Banco de Dados Supabase Para Atendimento de Suporte
+# Instruções e Configurações Usadas no Projeto
+
+# Para executar no Supabase:
+
+
+# 1- Habilite a extensão no banco de dados como mostrado nas aulas.
+
+
+# 2 - Crie a tabela:
+
+create table public.tb_suportedsa (
+  embedding VECTOR(1536) null,
+  metadata jsonb null,
+  content text null
+);
+
+
+# 3- Desative RLS:
+
+alter table public.tb_suportedsa disable row level security;
+
+
+# 4- Crie a política:
+
+create policy "tb_suportedsa_insert"
+on public.tb_suportedsa
+as permissive
+for insert
+to authenticated
+with check (true);
+
+
+# 5- Crie a função para busca vetorial:
+
+CREATE OR REPLACE FUNCTION public.match_documents(
+ filter JSONB,
+ match_count INT,
+ query_embedding VECTOR(1536) 
+)
+RETURNS TABLE (
+ content TEXT,
+ metadata JSONB,
+ embedding VECTOR(1536), 
+ similarity FLOAT
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+ RETURN QUERY
+ SELECT
+ v.content,
+ v.metadata,
+ v.embedding,
+ 1 - (v.embedding <=> match_documents.query_embedding) AS similarity
+ FROM "tb_suportedsa" v
+ WHERE v.metadata @> filter
+ ORDER BY v.embedding <=> match_documents.query_embedding
+ LIMIT match_count;
+END;
+$$
+;
+
+
+# 6- Consulte a tabela:
+
+select * from public.tb_suportedsa;
+
+
+
+
+
+
+
+
+
+
+
