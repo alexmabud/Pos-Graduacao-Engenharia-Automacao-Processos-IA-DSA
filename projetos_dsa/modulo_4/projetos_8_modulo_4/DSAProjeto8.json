@@ -1,0 +1,592 @@
+{
+  "name": "DSAProjeto8",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1ckP-ZgAMs2l2sFUpLAXx-gWNOQrHXoAs48Vo271X3rs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ckP-ZgAMs2l2sFUpLAXx-gWNOQrHXoAs48Vo271X3rs/edit?usp=drivesdk",
+          "cachedResultName": "dsa_lista_arquivos"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1476836405,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ckP-ZgAMs2l2sFUpLAXx-gWNOQrHXoAs48Vo271X3rs/edit#gid=1476836405",
+          "cachedResultName": "GOOG"
+        },
+        "options": {}
+      },
+      "id": "fbf17c10-f3c5-4ad7-9d6e-dd87f8fccd8e",
+      "name": "Lista de Arquivos Para Carregar no RAG",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        64,
+        416
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "76uGiNlIWJyQGkQv",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "DSA Log - Este nó acessa uma planilha no Google Sheets contendo os caminhos dos arquivos pdf com demonstrativos financeiros de empresas. Os arquivos estarão no Google Drive e na planilha vai apenas o caminho completo (url) de cada arquivo. Ou seja, a planilha funcionará como um índice."
+    },
+    {
+      "parameters": {
+        "content": "## Etapas de Configuração\n\n\n### 1. Chave da API do Google AI:\n\n* Obtenha uma chave da API do Google AI no Google AI Studio.\n\n### 2. Conta e chave da API do Pinecone:\n\n* Crie uma conta gratuita no site do Pinecone.\n* Obtenha sua chave da API no painel do Pinecone.\n* Crie um índice chamado dsa-relatorios no seu projeto do Pinecone.\n\n### 3. Google Drive - baixar e salvar documentos financeiros:\n\n* Acesse a empresa que deseja analisar e baixe os PDFs dos seus resultados trimestrais.\n* Salve os PDFs no Google Drive.\n* Crie uma Planilha no Google Sheets que armazene uma lista de URLs de arquivos apontando para os PDFs que você baixou e salvou no Google Drive.\n\n### 4- Configure as credenciais no seu ambiente n8n para:\n\n* Google Sheets OAuth2\n* Google Drive OAuth2\n* Google Docs OAuth2\n* API da OpenAI\n* API Google Gemini (PaLM) (usando sua chave da API Google AI)\n* API Pinecone (usando sua chave da API Pinecone)\n\n### 5- Execute o fluxo de trabalho:\n\n* Execute o workflow aqui no n8n. O relatório será gerado no Google Docs. Ajuste o prompt do Agente de IA conforme desejar.\n\n\nExemplo de fonte de dados:\n\nhttps://abc.xyz/investor",
+        "height": 1572,
+        "width": 500,
+        "color": 3
+      },
+      "id": "e38dea69-3a05-4c19-a58d-1f8b164bb2cf",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        336
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5edea605-b04e-435a-9479-e250fa2784c1",
+      "name": "Loop",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        288,
+        416
+      ],
+      "typeVersion": 3,
+      "notes": "DSA Log - Loop pelos elementos listados na planilha (nomes de arquivos)."
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Lista de Arquivos Para Carregar no RAG').item.json['File URL'] }}",
+          "mode": "url"
+        },
+        "options": {
+          "fileName": "={{ $('Lista de Arquivos Para Carregar no RAG').item.json['10Q'] }}"
+        }
+      },
+      "id": "9e8a436b-fcac-4726-8568-1571cdbcd0ad",
+      "name": "Download de Arquivos do Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        560,
+        416
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "E3ucghRY51zO0e9c",
+          "name": "Google Drive account"
+        }
+      },
+      "notes": "DSA Log - Este nó vai realizar o download dos arquivos que estão no Google Drive e que serão usados no RAG como fonte para geração de relatório com o Agente de IA."
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "mode": "list",
+          "value": "dsa-relatorios",
+          "cachedResultName": "dsa-relatorios"
+        },
+        "options": {}
+      },
+      "id": "c7a3663c-4ff7-402a-aae2-66a268f669c6",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "position": [
+        816,
+        416
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "pineconeApi": {
+          "id": "laPavsuoypMf5fnl",
+          "name": "PineconeApi account"
+        }
+      },
+      "notes": "DSA Log - Este nó vai construir um banco vetorial para armazenar os vetores dos dados de texto dos documentos em pdf."
+    },
+    {
+      "parameters": {},
+      "id": "7960fb45-101d-41dd-b54f-f612e4aa6caf",
+      "name": "Embeddings Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "position": [
+        720,
+        624
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LjvvVeEo6lxAsQlx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "DSA Log - Este nó é do modelo de embeddings, usado para converter texto em representação numérica."
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "pdfLoader",
+        "options": {}
+      },
+      "id": "d629c5e4-032e-4f2e-8812-df4d994513bc",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        896,
+        624
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Nó para carregar os documentos em pdf."
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "id": "1d174a5c-d9a8-47fe-bccf-11ae346a6327",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        976,
+        832
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Nó para a operação de chunking (divisão de dados de texto em blocos, ou chunks)."
+    },
+    {
+      "parameters": {
+        "content": "## Fluxo 1 - Módulo de RAG",
+        "height": 672,
+        "width": 1360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "5b23dbae-831e-4240-9be3-de7af55dccde",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "43f4e561-4ef4-4bbb-aaff-5dede33eb025",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        320,
+        1328
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "openAiApi": {
+          "id": "nDVI3dLJajuV3wUk",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "DSA Log - Node para o LLM da OpenAI. Este é o LLM que vai gerar o relatório."
+    },
+    {
+      "parameters": {
+        "name": "dsa_vector_store_tool",
+        "description": "Obtenha informações sobre os resultados financeiros do Google nos últimos 3 trimestres."
+      },
+      "id": "34d035e4-b57e-4510-aeb0-1d2e28a6db38",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        560,
+        1344
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Ferramenta para consultar o RAG."
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "mode": "list",
+          "value": "dsa-relatorios",
+          "cachedResultName": "dsa-relatorios"
+        },
+        "options": {}
+      },
+      "id": "1cc0783e-be89-40df-8c15-fbefecd61589",
+      "name": "Pinecone Vector Store (Retrieval)",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "position": [
+        432,
+        1552
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "pineconeApi": {
+          "id": "laPavsuoypMf5fnl",
+          "name": "PineconeApi account"
+        }
+      },
+      "notes": "DSA Log - Retriever do RAG."
+    },
+    {
+      "parameters": {},
+      "id": "8572c2bf-698a-440d-82fd-7e114559cd24",
+      "name": "Embeddings Google Gemini (retrieval)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "position": [
+        560,
+        1728
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LjvvVeEo6lxAsQlx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "DSA Log - Modelo de embeddings usado pelo retriever."
+    },
+    {
+      "parameters": {
+        "content": "## Fluxo 2 - Módulo do Agente de IA",
+        "height": 864,
+        "width": 1360,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1040
+      ],
+      "typeVersion": 1,
+      "id": "fd359b88-c670-47ad-be0d-d098fff9cf5e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## IA e Fluxos Cognitivos Para Automação de Processos de Negócios (BPA) com n8n\n\n### DSA - Projeto 8\n\n**Fluxo de Automação com Agentes de IA e RAG Para Geração de Relatórios**\n\nwww.datascienceacademy.com.br",
+        "height": 192,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "816eb986-b255-45bd-a723-d405c511ca2f",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {},
+      "id": "dbfad583-83ff-4b73-ac81-662d5981abd1",
+      "name": "Início do Fluxo 2",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        128,
+        1120
+      ],
+      "typeVersion": 1,
+      "notes": "DSA Log - Node de início do Fluxo 2."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Elabore um relatório sobre os resultados financeiros do Google nos últimos três trimestres. Formate-o em Markdown. Concentre-se nas diferenças e tendências. Identifique quaisquer valores discrepantes.",
+        "options": {
+          "systemMessage": "Você é um analista financeiro altamente qualificado, especializado em analisar o desempenho financeiro do Google (Alphabet Inc.). Você tem acesso a duas ferramentas poderosas:\n\n1. **Ferramenta Vector Store:** Esta ferramenta permite recuperar informações relevantes dos relatórios de resultados do Google dos últimos três trimestres (documentos PDF). Os documentos foram processados e armazenados como embeddings em um banco de dados vetorial, possibilitando a busca semântica. Use esta ferramenta para encontrar informações específicas relacionadas a receita, despesas, lucros, prejuízos, crescimento, métricas-chave, comentários da administração e quaisquer outros dados financeiros relevantes.\n\n2. **Ferramenta Google Docs:** Esta ferramenta permite criar, editar e formatar documentos do Google Docs. Use-a para salvar suas descobertas em um documento do Google Docs. Sua tarefa é gerar relatório resumido sobre o desempenho financeiro do Google com base nos relatórios de resultados dos últimos três trimestres. \n\n3. **Recupere informações relevantes:** Use a ferramenta Vector Store para pesquisar e recuperar as passagens de texto mais relevantes dos relatórios de resultados. Recupere vários trechos diversos para garantir uma cobertura abrangente.\n\n4. **Sintetize e analise:** Analise as informações dos trechos de texto recuperados. Identifique as principais tendências, padrões e insights relacionados à consulta do usuário.\n\n5. **Gere o relatório no Google Docs:** Use a ferramenta Google Docs para criar um novo documento do Google (ou anexar a um existente, se especificado pelo usuário). Estruture o relatório com títulos claros, marcadores e parágrafos concisos. Inclua o seguinte em seu relatório, conforme apropriado:\n\n* **Resumo Executivo:** Uma breve visão geral das principais conclusões.\n\n* **Análise de Receita:** Relatório sobre os valores de receita, taxas de crescimento e principais fatores de receita.\n* **Análise de Despesas:** Relate as principais categorias de despesas e seu impacto na lucratividade.\n* **Análise de Lucratividade:** Discuta o lucro líquido, as margens de lucro e o lucro por ação (LPA).\n\n* **Métricas Principais:** Inclua outras métricas financeiras relevantes mencionadas nos relatórios (por exemplo, lucro operacional, fluxo de caixa, desempenho do segmento).\n\n* **Comentários da Administração:** Resuma quaisquer insights ou explicações relevantes fornecidos pela administração do Google nas teleconferências ou relatórios de resultados.\n\n* **Análise de Tendências:** Compare o desempenho do trimestre atual com os dois trimestres anteriores, destacando mudanças ou tendências significativas.\n\n* **Visualizações:** Se possível, use a ferramenta Google Docs para inserir gráficos ou tabelas básicos para representar visualmente os dados. (Você pode precisar orientar o usuário sobre como fazer isso se a ferramenta tiver limitações.)\n\n6. **Cite as Fontes:** Indique claramente a fonte de suas informações (por exemplo, \"Relatório de Resultados do 2º Trimestre de 2023\") para cada ponto de dados ou análise.\n\n7. **Mantenha um tom profissional:** Escreva em um tom claro, conciso e objetivo, como esperado de um analista financeiro. Evite especulações ou afirmações sem fundamento.\n\nSeu objetivo final é fornecer ao usuário um relatório financeiro bem estruturado, informativo e preciso, baseado nos dados disponíveis nos últimos três trimestres dos relatórios de resultados do Google.\n\nSalve o relatório como um documento do Google usando a ferramenta disponível! Gere o relatório em português do Brasil."
+        }
+      },
+      "id": "fc17dfab-5290-4df9-b3b3-037a553714c1",
+      "name": "Agente de IA",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        432,
+        1120
+      ],
+      "typeVersion": 1.7,
+      "notes": "DSA Log - Nó do Agente de IA"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "3bKUl-mnCaI4__tULmBZSvWlOQhTHdD-RUPesP7_sGB7",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "id": "2e093d07-b56f-483d-a743-3ff3bb36af10",
+      "name": "Salva o Relatório no Google Docs",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        848,
+        1120
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "p49iv91FiKVVcOlh",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "DSA Log - Nó para salvar o relatório no Google Docs"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "id": "9feddd46-22d5-4f02-a71c-2ead563a01db",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        784,
+        1536
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LjvvVeEo6lxAsQlx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "DSA Log - Este LLM será usado para formatar a resposta do RAG."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        416
+      ],
+      "id": "b03bcbbd-167c-44c3-9dc9-5cc6989e09cd",
+      "name": "Fim1",
+      "notes": "DSA Log - Fim do fluxo 1."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1120
+      ],
+      "id": "c55258ba-da3f-4e30-b648-99d38da777c8",
+      "name": "Fim2",
+      "notes": "DSA Log - Fim do fluxo 2."
+    }
+  ],
+  "pinData": {
+    "Agente de IA": [
+      {
+        "json": {
+          "output": "# Google (Alphabet Inc.) Financial Report: Last 3 Quarters\n\n## Executive Summary\nGoogle has demonstrated solid revenue growth across the last three quarters, although there are notable fluctuations in operating income, net income, and other income/expense categories. While revenue from both Google Services and Cloud shows consistent year-over-year growth, the operating margins have shown variability. \n\n## Revenue Analysis\n- **Quarter 1:**\n - **Revenue:** $80.5 billion, a 15% year-over-year increase.\n - **Google Services Revenue:** Up $8.4 billion (14%).\n - **Google Cloud Revenue:** Up $2.1 billion (28%).\n\n- **Quarter 2:**\n - **Revenue:** $84.7 billion, a 14% year-over-year increase.\n - **Google Services Revenue:** Up $7.6 billion (12%).\n - **Google Cloud Revenue:** Up $2.3 billion (29%).\n\n- **Quarter 3:**\n - **Revenue:** $88.3 billion, a 15% year-over-year increase.\n - **Google Services Revenue:** Up $8.5 billion (13%).\n - **Google Cloud Revenue:** Up $2.9 billion (35%).\n\n### Key Trends\n- Consistent revenue growth across all three quarters.\n- Strong growth in Google Cloud, indicating it is a significant area of expansion.\n\n## Expense Analysis\n- **Cost of Revenue:**\n - **Quarter 1:** $33.7 billion (up 10% year-over-year).\n - Reason for increase: Higher total acquisition costs, content acquisition costs, and depreciation.\n\n- **Operating Income:**\n - **Quarter 1:** $17.415 billion (25% operating margin).\n - **Quarter 2:** $21.838 billion (29% operating margin).\n - **Quarter 3:** $21.343 billion (28% operating margin).\n\n### Observations\n- Operating margins have fluctuated, while overall costs have continued to rise.\n \n## Profitability Analysis\n- **Net Income:**\n - **Quarter 1:** $15.051 billion.\n - **Quarter 2:** $18.368 billion.\n - **Quarter 3:** $19.689 billion.\n \n- **Diluted EPS:**\n - **Quarter 1:** $1.17.\n - **Quarter 2:** $1.44.\n - **Quarter 3:** $1.55.\n\n### Summary\nWhile net income has increased, the fluctuations in other income and expense metrics have affected profitability.\n\n## Key Metrics\n- **Operating Margins:**\n - Q1: 25%\n - Q2: 29%\n - Q3: 28%\n\n- **Other Income (Expense), Net:**\n - Q1: $790 million.\n - Q2: $65 million.\n - Q3: -$146 million. (Downturn to a negative number)\n\n## Management Commentary\nManagement has pointed out that increased revenue performance in Google Cloud is encouraging, especially given the challenges in the overall economic environment.\n\n## Trend Analysis\n- **Comparative Performance:**\n - Revenue trends show consistency, ranging from 14%-15% growth year-over-year.\n - Operating income showed a decreasing trend from Q1 ($17.415 billion) to Q2 ($21.838 billion) and slightly decreased again in Q3 ($21.343 billion).\n \n### Noteworthy Observations\n- **Outliers:**\n - Significant volatility in other income/expense net, transitioning from $790 million in Q1 to a loss of $146 million in Q3.\n \n- **Operating Margins:** \n - Variability seen in margins from Q1 (25%) to Q2 (29%) and back down to Q3 (28%) shows a trend of volatility.\n\n## Conclusion\nGoogle has maintained a strong financial position characterized by solid revenue growth. However, the apparent volatility in other income/expense and operating margins warrants closer scrutiny, as it could impact future profitability. The continuous growth in Google Cloud is a positive indicator and suggests strong potential for the coming quarters.\n\n---\n\nThis report provides a comprehensive overview of Google's financial performance over the past three quarters, highlighting key metrics, trends, and outliers. If you require further details or specific analysis, please let me know!"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Lista de Arquivos Para Carregar no RAG": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download de Arquivos do Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download de Arquivos do Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store (Retrieval)": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini (retrieval)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store (Retrieval)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Início do Fluxo 2": {
+      "main": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de IA": {
+      "main": [
+        [
+          {
+            "node": "Salva o Relatório no Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salva o Relatório no Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Fim2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Fim1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "178c2491-e61d-4ee9-96f3-867169d6385d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d782b63f74f79facb2b52d144a1d3ac032de15ba379445cdd03add0ece8e6a"
+  },
+  "id": "2KKRmFrQqg36cMaL",
+  "tags": []
+}
